@@ -1,0 +1,32 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo 
+  tasks:
+
+    - name: Add a group which can sudo without a password
+      group:
+        name: nopasswders
+        state: present
+    - name: Actually let this group sudo
+      lineinfile:
+        #Some old distros don't support /etc/sudoers.d/
+        dest: /etc/sudoers
+        state: present
+        regexp: '^%nopasswders'
+        line: '%nopasswders ALL=(ALL) NOPASSWD: ALL'
+
+    - name: Add an ansible user 
+      #We use a separate group from "sudoers" because
+      #we need to enable the group to use sudo without a password.
+      #Setting this attribute for all users in the "sudo" group would be a security risk.
+      user: name=ansible group=nopasswders state=present createhome=yes 
+
+    - name: Copy SSH key and allow SSH access by ansible user 
+      authorized_key:
+        user: ansible
+        #Replace this with your own pubkey
+        key: https://gist.githubusercontent.com/casept/4704735c70870f26c942a08cdaedfbda/raw/37922cf65126bc0d38b52a818ce97617f7f4ad85/gistfile1.txt
+        state: present
+...
