@@ -1,0 +1,35 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo 
+  tasks:
+    - name: Enable apt downloads over HTTPS
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+        state: present
+        update_cache: yes
+
+    #Devicemapper sucks and we need to install a package for aufs support on trusty
+    - name: Install aufs support package on trusty
+      apt:
+        name:
+          - linux-image-extra-{{ansible_kernel}}
+      when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'trusty'
+    - name: Add docker repo key
+      apt_key:
+        url: https://yum.dockerproject.org/gpg
+        state: present
+        id: 58118E89F3A912897C070ADBF76221572C52609D
+    - name: Add docker repo
+      apt_repository:
+        repo: deb https://apt.dockerproject.org/repo/ {{ansible_distribution | lower}}-{{ansible_distribution_release}} main
+        state: present
+    - name:
+      apt:
+        name: docker-engine
+        state: present
+        update_cache: yes 
+...
