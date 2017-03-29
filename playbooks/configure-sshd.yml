@@ -1,0 +1,37 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo 
+  tasks:
+    - name: Change SSHd port to 666 
+      lineinfile:
+        dest: "/etc/ssh/sshd_config"
+        regexp: "^Port"
+        line: "Port 666"
+      notify: "Restart sshd"
+
+    - name: Disable password auth 
+      lineinfile:
+        dest: "/etc/ssh/sshd_config"
+        regexp: "^PasswordAuthentication"
+        line: "PasswordAuthentication no"
+      notify: "Restart sshd"
+
+    - name: Disallow root login
+      lineinfile:
+        dest: "/etc/ssh/sshd_config"
+        regexp: "^PermitRootLogin"
+        line: "PermitRootLogin no"
+      notify: "Restart sshd"
+  # Currently disabled as ansible doesn't seem to be able to skip this on hosts without selinux
+  #    - name: Setup selinux for alternate SSH port
+  #      seport:
+  #        ports: "666"
+  #        proto: "tcp"
+  #        setype: "ssh_port_t"
+  #        state: "present" 
+  handlers:
+    - name: Restart sshd
+      service: name=ssh state=restarted
+...
