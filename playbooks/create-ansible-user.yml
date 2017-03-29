@@ -27,6 +27,6 @@
       authorized_key:
         user: ansible
         #Replace this with your own pubkey
-        key: https://gist.githubusercontent.com/casept/4704735c70870f26c942a08cdaedfbda/raw/37922cf65126bc0d38b52a818ce97617f7f4ad85/gistfile1.txt
+        key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCwzwv1wj6QHXVzDbc2Ma6zMB7Y4Pm71Ye91OfmXIGSTUZgrNPZWWwWlJIEgJHdBjWrb5bgUxJ/FW4oVvtvGL09K+CN8srKBIRTkUmnjCeHOE6tl8/Nbhp5cqYOagmq3Dyz0w0JFnXhybht3X6HdKZrSQR0JMTjsHvAvdrPhvtFhqoqsX9hGVwL/gh7CpWop8/598impQDybIZByThsGsEVGUvvmwlb2FX5E5Q1z7bPoKALRfWX0oq79WHJtvoy4awN0chFTgMjc+eedT0M8PBcAv0KfNwiWMUiJzFecfxpsCTtWgd2RTjNdOCDOcjvr8m8KNBrTnSFGywnZlenAN2zZd+G4Cmc586C2A9fDnCI5i5mxRucE3w20m/RIKQf4FA/0jiFnh4M0e6XeZjJn2AfpYz3+W+2vlz/xld6hIbEmdzCSBQLz3q1CmecBJKfQKXujH1BnSOQcoFBWhs1y1dCFv9kFndKKJpNh6HInRCgy3+/J4QnonZNtc8qyRqvlTz9DdLyuL2WYQwcErmOdlgOpK/x9kjyP3367sNJBECdrVOiU3mpxNJdnhGCxmnm/FRTOXPgQX5yrmborwgGBgDmFNU5DHjBaysKXRcXc+uwD2CxXu3p6ZSDH//PA2q3KL05cLR3wv5u/ytILEeR2XPUPIiMoPAE/5yI9MgDtHXGJQ== david@t400" 
         state: present
 ...
