@@ -4,6 +4,11 @@
   become_user: root
   become_method: sudo 
   tasks:
+    - name: Install openssh
+      apt:
+        package: openssh-server
+        state: present
+
     - name: Change SSHd port to 666 
       lineinfile:
         dest: "/etc/ssh/sshd_config"
@@ -30,7 +35,20 @@
   #        ports: "666"
   #        proto: "tcp"
   #        setype: "ssh_port_t"
-  #        state: "present" 
+  #        state: "present"
+
+  #    - name: Check if UFW is installed
+  #      # TODO: Get location of the binary from PATH
+  #      stat: path=/usr/sbin/ufw
+  #      register: ufw_binary
+
+  #    - name: Set up UFW if present
+  #      ufw:
+  #        rule: allow
+  #        port: 666
+  #        proto: tcp
+  #      when: ufw_binary.exists == True
+
   handlers:
     - name: Restart sshd
       service: name=ssh state=restarted
