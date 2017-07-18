@@ -1,0 +1,24 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo 
+  tasks:
+    - name: Install virtualbox base
+      apt:
+        name: [virtualbox, virtualbox-qt] 
+        state: present
+        update_cache: yes 
+
+    - name: Accept virtualbox extension pack license agreement
+      debconf:
+        name: "virtualbox-ext-pack"
+        question: "virtualbox-ext-pack/license"
+        value: "true"
+        vtype: "select"
+
+    - name: Install virtualbox proprietary extensions and guest additions
+      apt:
+        name: [virtualbox-ext-pack, virtualbox-guest-additions-iso]
+        state: present
+...
