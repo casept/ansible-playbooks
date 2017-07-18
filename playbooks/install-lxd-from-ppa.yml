@@ -1,0 +1,137 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: yes
+
+  tasks:
+    - name: Add LXD-stable PPA
+      apt_repository:
+        repo: "ppa:ubuntu-lxc/lxd-stable"
+        state: present
+
+    - name: Install LXD
+      apt:
+        package: [lxd, dnsmasq]
+        update_cache: yes
+        state: latest
+
+    - name: Configure LXD storage 
+      # Is there a better place to put this file?
+      # Or use one created by LXD itself?
+      shell: lxd init --auto && touch /var/lib/lxd/ansible-lxd-init creates=/var/lib/lxd/ansible-lxd-init
+
+
+    - name: Use lxd bridge
+      lineinfile:
+        dest: "/etc/default/lxd-bridge.upgraded"
+        regexp: "^USE_LXD_BRIDGE"
+        line: "USE_LXD_BRIDGE=true"
+      notify: "Restart LXD"
+
+    - name: Enable lxdbr0 bridge
+      lineinfile:
+        dest: "/etc/default/lxd-bridge.upgraded"
+        regexp: "^LXD_BRIDGE"
+        line: "LXD_BRIDGE=lxdbr0"
+      notify: "Restart LXD"
+
+    - name: Set bridge domain to lxd
+      lineinfile:
+        dest: "/etc/default/lxd-bridge.upgraded"
+        regexp: "^LXD_DOMAIN"
+        line: "LXD_DOMAIN=lxd"
+      notify: "Restart LXD"
+
+    - name: Set IPv4 address
+      lineinfile:
+        dest: "/etc/default/lxd-bridge.upgraded"
+        regexp: "^LXD_IPV4_ADDR"
+        line: "LXD_IPV4_ADDR=10.153.185.1"
+      notify: "Restart LXD"
+
+    - name: Set IPv4 subnet 
+      lineinfile:
+        dest: "/etc/default/lxd-bridge.upgraded"
+        regexp: "^LXD_IPV4_NETWORK"
+        line: "LXD_IPV4_NETWORK=10.153.185.1/24"
+      notify: "Restart LXD"
+
+    - name: Set IPv4 DHCP range 
+      lineinfile:
+        dest: "/etc/default/lxd-bridge.upgraded"
+        regexp: "^LXD_IPV4_DHCP_RANGE"
+        line: "LXD_IPV4_DHCP_RANGE=10.153.185.2,10.153.185.254"
+      notify: "Restart LXD"
+
+    - name: Set max number of IPv4 DHCP clients
+      lineinfile:
+        dest: "/etc/default/lxd-bridge.upgraded"
+        regexp: "^LXD_IPV4_DHCP_MAX"
+        line: "LXD_IPV4_DHCP_MAX=252"
+      notify: "Restart LXD"
+
+    - name: Set IPv4 netmask
+      lineinfile:
+        dest: "/etc/default/lxd-bridge.upgraded"
+        regexp: "^LXD_IPV4_NETMASK"
+        line: "LXD_IPV4_NETMASK=255.255.255.0"
+      notify: "Restart LXD"
+
+    - name: Enable IPv4 NAT
+      lineinfile:
+        dest: "/etc/default/lxd-bridge.upgraded"
+        regexp: "^LXD_IPV4_NAT"
+        line: "LXD_IPV4_NAT=true"
+      notify: "Restart LXD"
+
+    - name: Set IPv6 address 
+      lineinfile:
+        dest: "/etc/default/lxd-bridge.upgraded"
+        regexp: "^LXD_IPV6_ADDR"
+        line: "LXD_IPV6_ADDR=fdfc:2585:5d49:b932::1"
+      notify: "Restart LXD"
+
+
+    - name: Set IPv6 subnet 
+      lineinfile:
+        dest: "/etc/default/lxd-bridge.upgraded"
+        regexp: "^LXD_IPV6_NETWORK"
+        line: "LXD_IPV6_NETWORK=fdfc:2585:5d49:b932::1/64"
+      notify: "Restart LXD"
+
+
+    - name: Set IPv6 netmask 
+      lineinfile:
+        dest: "/etc/default/lxd-bridge.upgraded"
+        regexp: "^LXD_IPV6_MASK"
+        line: "LXD_IPV6_MASK=64"
+      notify: "Restart LXD"
+
+
+    - name: Enable IPv6 NAT
+      lineinfile:
+        dest: "/etc/default/lxd-bridge.upgraded"
+        regexp: "^LXD_IPV6_NAT"
+        line: "LXD_IPV6_NAT=true"
+      notify: "Restart LXD"
+
+
+    - name: Disable IPv6 HTTP Proxy
+      lineinfile:
+        dest: "/etc/default/lxd-bridge.upgraded"
+        regexp: "^LXD_IPV6_PROXY"
+        line: "LXD_IPV6_PROXY=false"
+      notify: "Restart LXD"
+
+    - name: Add current user to LXD group
+      user:
+        name: "{{ansible_user}}"
+        groups: lxd
+        append: yes
+
+  handlers:
+    - name: Restart LXD
+      service: name=lxd state=restarted
+
