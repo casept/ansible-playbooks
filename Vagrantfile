@@ -15,13 +15,13 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "debian_stretch" do |debian_stretch|
-    debian_jessie.vm.box = "debian/stretch64"
-    debian_jessie.vm.network "private_network", ip: "192.168.33.11"
-    debian_jessie.vm.provision "ansible" do |ansible|
+    debian_stretch.vm.box = "debian/stretch64"
+    debian_stretch.vm.network "private_network", ip: "192.168.33.11"
+    debian_stretch.vm.provision "ansible" do |ansible|
       ansible.playbook = "provision.yml"
       ansible.extra_vars = { ansible_ssh_user: 'vagrant' }
     end
-    debian_jessie.vm.provider "virtualbox" do |vb|
+    debian_stretch.vm.provider "virtualbox" do |vb|
       vb.memory = "512"
     end
   end
