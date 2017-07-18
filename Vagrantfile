@@ -26,14 +26,14 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  config.vm.define "ubuntu_trusty" do |ubuntu_trusty|
-    ubuntu_trusty.vm.box = "ubuntu/trusty64"
-    ubuntu_trusty.vm.network "private_network", ip: "192.168.33.12"
-    ubuntu_trusty.vm.provision "ansible" do |ansible|
+  config.vm.define "ubuntu_zesty" do |ubuntu_zesty|
+    ubuntu_zesty.vm.box = "wholebits/ubuntu17.04-64" 
+    ubuntu_zesty.vm.network "private_network", ip: "192.168.33.12"
+    ubuntu_zesty.vm.provision "ansible" do |ansible|
       ansible.playbook = "provision.yml"
       ansible.extra_vars = { ansible_ssh_user: 'vagrant' }
     end
-    ubuntu_trusty.vm.provider "virtualbox" do |vb|
+    ubuntu_zesty.vm.provider "virtualbox" do |vb|
       vb.memory = "512"
     end
   end
