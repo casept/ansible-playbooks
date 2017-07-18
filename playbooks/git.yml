@@ -1,0 +1,12 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo 
+  tasks:
+    - name: Install git 
+      apt:
+        name: git
+        state: present
+        update_cache: yes
+...

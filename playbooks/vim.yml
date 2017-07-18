@@ -1,0 +1,12 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo 
+  tasks:
+    - name: Install vim 
+      apt:
+        name: vim-nox
+        state: present
+        update_cache: yes
+...
