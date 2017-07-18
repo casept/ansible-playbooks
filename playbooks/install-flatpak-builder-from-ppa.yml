@@ -1,0 +1,18 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: yes
+
+  tasks:
+    - name: Add flatpak PPA
+      apt_repository:
+        repo: "ppa:alexlarsson/flatpak"
+        state: present
+
+    - name: Install flatpak and flatpak-builder
+      apt:
+        package: [flatpak, flatpak-builder]
+        update_cache: yes
+        state: latest
