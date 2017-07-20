@@ -1,0 +1,11 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo 
+  tasks:
+    - name: Install vagrant
+      apt: 
+        deb: "https://releases.hashicorp.com/vagrant/1.9.7/vagrant_1.9.7_x86_64.deb"
+        state: present
+...

@@ -1,0 +1,12 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo 
+  tasks:
+    - name: Install tmux 
+      apt:
+        name: tmux
+        state: present
+        update_cache: yes
+...
