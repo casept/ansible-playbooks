@@ -8,11 +8,11 @@
   tasks:
     - name: Add firefox PPA
       apt_repository:
-        repo: "ppa:mozillateam/firefox-next"
+        repo: "ppa:ubuntu-mozilla-daily/ppa" 
         state: present
 
     - name: Install firefox
       apt:
-        package: [firefox]
+        package: [firefox-trunk]
         update_cache: yes
         state: latest
