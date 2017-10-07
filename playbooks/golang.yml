@@ -2,11 +2,23 @@
 - hosts: all
   become: yes
   become_user: root
-  become_method: sudo 
+  become_method: sudo
   tasks:
-    - name: Download and install golang
+    - name: Get URL pointing to the latest golang version
+      shell: wget --quiet https://golang.org/dl/ -O- | grep linux-amd64.tar.gz | cut -d '"' -f6 | sed -n '3p'
+      register: golang_latest_url
+      failed_when: golang_latest_url.rc > 0
+      changed_when: False
+
+    - name: Download golang
+      get_url:
+        url: "{{ golang_latest_url.stdout }}"
+        dest: /tmp/golang.tar.gz
+        remote_src: true
+
+    - name: Install golang
       unarchive:
-        src: https://storage.googleapis.com/golang/go1.9.linux-amd64.tar.gz
+        src: /tmp/golang.tar.gz
         dest: /usr/local/
         remote_src: true
 
@@ -18,5 +30,5 @@
       with_items:
         - go
         - godoc
-        - gofmt 
+        - gofmt
 ...
