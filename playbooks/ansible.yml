@@ -1,0 +1,31 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: yes
+
+  tasks:
+    - name: Add ansible PPA
+      apt_repository:
+        repo: "ppa:ansible/ansible"
+        state: present
+
+    - name: Install ansible
+      apt:
+        package: [ansible]
+        update_cache: yes
+        state: present
+
+    - name: Install pip2
+      apt:
+        package: [python-pip]
+        update_cache: no
+        state: present
+
+    - name: Install ansible-lint
+      pip:
+        name:
+          - ansible-lint
+        state: present
+...
