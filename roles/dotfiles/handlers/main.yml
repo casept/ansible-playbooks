@@ -1,0 +1,10 @@
+---
+- name: Install dotfiles
+  shell: stow -d ~/dotfiles -t ~/ {{ item }}
+  with_items:
+    - bash
+    - git
+    - redshift
+    - tmux
+    - vim
+...

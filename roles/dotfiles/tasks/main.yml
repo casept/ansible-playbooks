@@ -1,0 +1,16 @@
+---
+- hosts: all
+  become: yes
+  become_user: '{{local_username}}'
+  become_method: sudo
+  gather_facts: no
+
+- name: clone dotfiles git repo into ~
+  git:
+    repo: 'https://github.com/{{gh_username}}/dotfiles'
+    dest: ~/dotfiles/
+    update: no
+    accept_hostkey: true
+  notify:
+    - Install dotfiles
+...
