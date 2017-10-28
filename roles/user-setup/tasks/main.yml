@@ -1,0 +1,12 @@
+---
+- hosts: all
+  become: yes
+  become_user: '{{ local_username }}'
+  become_method: sudo
+  tasks:
+    - name: Add authorized SSH key
+      authorized_key:
+        key: '{{ ssh_pubkey }}'
+        user: '{{ local_username }}'
+        state: present
+...
