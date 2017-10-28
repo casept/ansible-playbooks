@@ -1,0 +1,20 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: no
+  tasks:
+    - name: Install pip
+      apt:
+        name:
+          - python-pip
+        state: present
+        update_cache: yes
+    #TODO: Find a way to use python3 to do this
+    - name: Install docker compose
+      pip:
+        name:
+          - docker-compose
+        state: present
+...

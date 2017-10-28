@@ -1,0 +1,34 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: no
+  tasks:
+    - name: Enable apt downloads over HTTPS
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+        state: present
+        update_cache: yes
+
+    - name: Add vscode repo key
+      apt_key:
+        # Key is the same for ubuntu and debian
+        url: https://packages.microsoft.com/keys/microsoft.asc
+        state: present
+
+    - name: Add vscode repo
+      apt_repository:
+        repo: deb https://packages.microsoft.com/repos/vscode stable main
+        state: present
+
+    - name: Install vscode
+      apt:
+        name: code
+        state: present
+        update_cache: yes
+...

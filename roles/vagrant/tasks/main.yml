@@ -1,0 +1,22 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: no
+  tasks:
+    - name: Get URL pointing to the latest Vagrant .deb
+      # Ignore linter warning abot wget - it's cleaner than the alternative.
+      args:
+        warn: false
+
+      shell: wget --quiet https://www.vagrantup.com/downloads.html -O- | grep -P "\d+\.\d+\.\d+_x86_64\.deb" | cut -d'"' -f2
+      register: vagrant_latest_deb_url
+      failed_when: vagrant_latest_deb_url.rc > 0
+      changed_when: False
+
+    - name: Install vagrant
+      apt:
+        deb: "{{ vagrant_latest_deb_url.stdout }}"
+        state: present
+...
