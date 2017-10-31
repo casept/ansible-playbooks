@@ -1,0 +1,28 @@
+---
+- import_playbook: neovim.yml
+- hosts: all
+  become: yes
+  become_user: '{{local_user}}'
+  become_method: sudo
+  gather_facts: no
+  tasks:
+    - name: Install extensions
+      command: code --install-extension '{{item}}'
+      register: code
+      with_items:
+        - Compulim.compulim-vscode-closetag
+        - DavidAnson.vscode-markdownlint
+        - Shan.code-settings-sync
+        - Zarel.sublime-commands
+        - actboy168.lua-debug
+        - bungcip.better-toml
+        - donjayamanne.python
+        - lukehoban.Go
+        - mattn.OpenVim
+        - ms-vscode.cpptools
+        - robertohuertasm.vscode-icons
+        - unsoul.theme-monokai-dark-soda-extended
+        - vittorioromeo.expand-selection-to-scope
+        - vscodevim.vim
+      changed_when: "'is already installed.' not in code.stdout"
+...

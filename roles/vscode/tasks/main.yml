@@ -31,4 +31,7 @@
         name: code
         state: present
         update_cache: yes
+
+
+- import_playbook: extensions.yml
 ...
