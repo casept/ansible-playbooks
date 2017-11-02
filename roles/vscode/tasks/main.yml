@@ -5,7 +5,7 @@
   become_method: sudo
   gather_facts: no
   tasks:
-    - name: Enable apt downloads over HTTPS
+    - name: Ensure apt can download over HTTPS
       apt:
         name:
           - apt-transport-https
@@ -13,7 +13,6 @@
           - curl
           - software-properties-common
         state: present
-        update_cache: yes
 
     - name: Add vscode repo key
       apt_key:
@@ -24,6 +23,8 @@
     - name: Add vscode repo
       apt_repository:
         repo: deb https://packages.microsoft.com/repos/vscode stable main
+        # Needed so vscode doesn't generate a duplicate file in sources.list.d/
+        filename: vscode
         state: present
 
     - name: Install vscode
