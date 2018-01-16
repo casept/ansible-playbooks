@@ -1,0 +1,47 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: no
+  tasks:
+    - name: Install i3 and some utilities
+      with_items:
+        - i3
+        - i3lock
+        - i3status
+        - dmenu
+        - feh
+        - xautolock
+        - dunst
+      apt:
+        name: "{{ item }}"
+        state: present
+    - name: Install lightdm
+      with_items:
+        - lightdm
+        - lightdm-gtk-greeter
+      apt:
+        name: "{{ item }}"
+        state: present
+    - name: Install networkmanager stuff
+      apt:
+        name: network-manager-gnome
+        state: present
+    - name: Install blueman
+      apt:
+        name: blueman
+        state: present
+    - name: Install scrot
+      apt:
+        name: scrot
+        state: present
+    - name: Install pulseaudio stuff
+      with_items:
+        - pulseaudio
+        - pulseaudio-utils
+        - pavucontrol
+      apt:
+        name: "{{ item }}"
+        state: present
+...
