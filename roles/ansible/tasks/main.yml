@@ -28,4 +28,12 @@
         name:
           - ansible-lint
         state: present
+
+    - name: Install passlib
+      pip:
+        name:
+          - python-passlib
+          - python3-passlib
+        state: present
+
 ...
