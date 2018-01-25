@@ -1,0 +1,34 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: yes
+  tasks:
+    - name: Ensure apt can download over HTTPS
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+        state: present
+
+    - name: Add megasync repo key
+      apt_key:
+        url: https://mega.nz/linux/MEGAsync/x{{ansible_lsb.id}}_{{ansible_distribution_version}}/Release.key
+        state: present
+
+    - name: Add megasync repo
+      apt_repository:
+        repo: deb https://mega.nz/linux/MEGAsync/x{{ansible_lsb.id}}_{{ansible_distribution_version}}/ ./
+        # Needed so megasync doesn't generate a duplicate file in sources.list.d/
+        filename: megasync
+        state: present
+
+    - name: Install megasync
+      apt:
+        name: megasync
+        state: present
+        update_cache: yes
+...
