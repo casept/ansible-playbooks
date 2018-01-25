@@ -1,0 +1,24 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: no
+  tasks:
+    - name: Install thunar
+      apt:
+        name: thunar
+        state: present
+
+    - name: Check if megasync is installed
+      command: dpkg-query -l megasync
+      register: deb_check
+      failed_when: no
+      changed_when: no
+
+    - name: Install megasync thunar addon if megasync is installed
+      when: deb_check.stdout.find('no packages found') != -1
+      apt:
+        name: thunar-megasync
+        state: present
+...
