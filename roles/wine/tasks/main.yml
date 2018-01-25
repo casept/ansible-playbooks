@@ -1,0 +1,33 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: Enable apt downloads over HTTPS
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+        state: present
+        update_cache: yes
+
+    - name: Add wine repo key
+      apt_key:
+        url: https://dl.winehq.org/wine-builds/Release.key
+        state: present
+
+    - name: Add wine repo
+      apt_repository:
+        repo: "deb https://dl.winehq.org/wine-builds/ubuntu/ {{ansible_distribution_release}} main"
+        state: present
+
+    - name: Install wine
+      apt:
+        name: wine-stable
+        state: present
+        install_recommends: yes
+        update_cache: yes
+...
