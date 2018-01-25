@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+# This script provisions a new ansible master and runs the devbox.yml playbook which does the heavy lifting.
+
+test -e /usr/bin/ansible || (sudo apt -y update && sudo apt install software-properties-common && sudo apt-add-repository ppa:ansible/ansible && sudo apt update && sudo apt install -y ansible)
+
+ansible-playbook --ask-become-pass -i inventory/localhost devbox.yml

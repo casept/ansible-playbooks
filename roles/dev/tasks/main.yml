@@ -1,0 +1,9 @@
+---
+  dependencies:
+    - ansible
+    - locales
+    - configure-sshd
+    - dotfiles
+    - user-setup
+    - tmux
+

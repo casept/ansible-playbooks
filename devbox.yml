@@ -1,0 +1,57 @@
+---
+- hosts: all
+  vars_files:
+    - devbox.yml
+
+  # Ask for user-creation credentials
+  vars_prompt:
+    - name: "local_username"
+      prompt: "Name of your user:"
+
+    - name: "local_password"
+      prompt: "The user's password:"
+      private: yes
+      confirm: yes
+      # TODO: Consider replacing with newer algo once support improves
+      encrypt: "sha512_crypt"
+
+  roles:
+    - {role: ansible}
+    - {role: locales}
+    - {role: configure-sshd}
+    - {role: dotfiles}
+    - {role: user-setup}
+
+    - {role: docker, when: install_containerization == true}
+    - {role: docker-compose, when: install_containerization == true}
+    - {role: lxd, when: install_containerization == true}
+
+    - {role: virtualbox, when: install_virtualization == true}
+
+    - {role: firefox-nightly, when: install_desktop == true}
+    - {role: thunderbird, when: install_desktop == true}
+    - {role: flatpak, when: install_desktop == true}
+    - {role: redshift, when: install_desktop == true}
+    - {role: syncthing, when: install_desktop == true}
+    - {role: veracrypt, when: install_desktop == true}
+    - {role: zim, when: install_desktop == true}
+    - {role: i3, when: install_desktop == true}
+
+    - {role: megasync, when: install_desktop == true and install_cloud == true}
+
+    - {role: discord, when: install_entertainment == true}
+    - {role: kodi, when: install_entertainment == true}
+    - {role: openra, when: install_entertainment == true}
+    - {role: nethack, when: install_entertainment == true}
+    - {role: bsdgames, when: install_entertainment == true}
+
+    - {role: golang, when: install_devtools == true}
+    - {role: python, when: install_devtools == true}
+    - {role: nodejs, when: install_devtools == true}
+    - {role: vagrant, when: install_devtools == true}
+    - {role: vim, when: install_devtools == true}
+    - {role: vscode, when: install_devtools == true and install_desktop == true}
+    - {role: vbindiff, when: install_devtools == true}
+    - {role: tmux, when: install_devtools == true}
+
+    - {role: tlp, when: install_laptop == true}
