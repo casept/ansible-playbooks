@@ -30,6 +30,7 @@
 
     - {role: firefox-nightly, when: install_desktop == true}
     - {role: thunderbird, when: install_desktop == true}
+    - {role: libreoffice, when: install_desktop == true}
     - {role: wine, when: install_desktop == true}
     - {role: flatpak, when: install_desktop == true}
     - {role: redshift, when: install_desktop == true}
