@@ -1,0 +1,4 @@
+---
+- name: install extension pack
+  include: install_extpack.yml
+  listen: install extension pack
