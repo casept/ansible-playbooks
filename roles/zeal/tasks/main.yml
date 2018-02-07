@@ -1,0 +1,18 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: no
+
+  tasks:
+    - name: Add zeal PPA
+      apt_repository:
+        repo: "ppa:zeal-developers/ppa"
+        state: present
+
+    - name: Install zeal
+      apt:
+        package: zeal
+        update_cache: yes
+        state: present
