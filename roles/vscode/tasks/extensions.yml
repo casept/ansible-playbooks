@@ -10,19 +10,26 @@
       command: code --install-extension '{{item}}'
       register: code
       with_items:
+        - AdamCaviness.theme-monokai-dark-soda
         - Compulim.compulim-vscode-closetag
         - DavidAnson.vscode-markdownlint
         - Shan.code-settings-sync
-        - Zarel.sublime-commands
+        - Tyriar.vscode-terminal-here
         - actboy168.lua-debug
         - bungcip.better-toml
-        - donjayamanne.python
+        - cssho.vscode-svgviewer
+        - eamodio.gitlens
+        - hdg.live-html-previewer
+        - jbw91.theme-material-dark-soda
         - lukehoban.Go
-        - mattn.OpenVim
+        - marcostazi.VS-code-vagrantfile
+        - ms-python.python
         - ms-vscode.cpptools
         - robertohuertasm.vscode-icons
-        - unsoul.theme-monokai-dark-soda-extended
+        - shardulm94.trailing-spaces
+        - timonwong.shellcheck
         - vittorioromeo.expand-selection-to-scope
         - vscodevim.vim
+        - wayou.vscode-todo-highlight
       changed_when: "'is already installed.' not in code.stdout"
 ...
