@@ -44,4 +44,17 @@
       apt:
         name: "{{ item }}"
         state: present
+    - name: Get URL pointing to the latest playerctl .deb
+      # Ignore linter warning abot wget - it's cleaner than the alternative.
+      args:
+        warn: false
+      shell: wget --quiet https://github.com/acrisci/playerctl/releases -O- | grep "_amd64.deb" | grep release | cut -d '"' -f2 | head -1 | sed "s/^/https:\/\/github.com/"
+      register: playerctl_latest_deb_url
+      failed_when: playerctl_latest_deb_url.rc > 0
+      changed_when: False
+
+    - name: Install playerctl
+      apt:
+        deb: "{{ playerctl_latest_deb_url.stdout }}"
+        state: present
 ...
