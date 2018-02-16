@@ -46,6 +46,7 @@
     - {role: openra, when: install_entertainment == true}
     - {role: nethack, when: install_entertainment == true}
     - {role: bsdgames, when: install_entertainment == true}
+    - {role: cmus, when: install_entertainment == true}
 
     - {role: golang, when: install_devtools == true}
     - {role: python, when: install_devtools == true}
