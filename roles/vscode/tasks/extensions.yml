@@ -31,5 +31,6 @@
         - vittorioromeo.expand-selection-to-scope
         - vscodevim.vim
         - wayou.vscode-todo-highlight
+        - vscoss.vscode-ansible
       changed_when: "'is already installed.' not in code.stdout"
 ...
