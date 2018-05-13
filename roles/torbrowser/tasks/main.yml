@@ -1,0 +1,19 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: no
+
+  tasks:
+    - name: Add torbrowser-launcher PPA
+      apt_repository:
+        repo: "ppa:micahflee/ppa"
+        state: present
+
+    - name: Install torbrowser-launcher
+      apt:
+        package: torbrowser-launcher
+        update_cache: yes
+        state: present
+...

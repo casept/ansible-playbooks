@@ -38,7 +38,7 @@
     - {role: veracrypt, when: install_desktop == true}
     - {role: zim, when: install_desktop == true}
     - {role: i3, when: install_desktop == true}
-
+    - {role: torbrowser, when: install_desktop=true and install_privacy=true}
     - {role: megasync, when: install_desktop == true and install_cloud == true}
 
     - {role: discord, when: install_entertainment == true}
