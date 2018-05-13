@@ -27,10 +27,12 @@
       pip:
         name:
           - ansible-lint
+        # Make sure it doesn't try to pull ansible from pip
+        extra_args: --no-deps
         state: present
 
     - name: Install passlib
-      pip:
+      apt:
         name:
           - python-passlib
           - python3-passlib
