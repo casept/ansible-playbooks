@@ -1,0 +1,58 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: no
+  tasks:
+    - name: Get URL pointing to the latest anki version
+      # Forgive the use of wget - it's much cleaner than the alternative.
+      args:
+        warn: false
+      shell: wget --quiet https://apps.ankiweb.net/ -O- | grep -o "/downloads/current/.*amd64.tar.bz2" | awk '{print "https://apps.ankiweb.net", $0;}' | tr -d ' '
+      register: anki_latest_url
+      failed_when: anki_latest_url.rc > 0
+      changed_when: False
+
+    - name: Create anki directory
+      file:
+        path: /opt/anki/
+        state: directory
+
+    # Needed because the tarball expands to an anki-version/ directory instead of directly into a directory containing bin/ and so on.
+    - name: Create temporary directory for extracting anki into
+      tempfile:
+        state: directory
+      register: anki_tempdir
+
+    - name: Download and extract anki
+      unarchive:
+        src: "{{ anki_latest_url.stdout }}"
+        dest: "{{ anki_tempdir.path }}"
+        remote_src: true
+
+    - name: Find anki directory name
+      find:
+        paths: "{{ anki_tempdir.path }}"
+        recurse: no
+        file_type: directory
+        use_regex: yes
+        patterns: "anki-.*"
+      register: anki_tempinstalldir
+
+    - name: Copy anki into install directory
+    # The copy module does not support recursive copying on remote.
+      shell: "cp -r {{ anki_tempinstalldir.files[0]['path'] }}/. /opt/anki/"
+
+    - name: Symlink anki into /usr/local/bin
+      file:
+        src: /opt/anki/bin/anki
+        dest: /usr/local/bin/anki
+        state: link
+
+    - name: Install anki .desktop file
+      file:
+        src: /opt/anki/anki.desktop
+        dest: /usr/local/share/applications/anki.desktop
+        state: link
+...
