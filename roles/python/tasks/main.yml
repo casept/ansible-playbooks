@@ -17,3 +17,9 @@
         package: [python3, python3-pip, ipython3]
         update_cache: yes
         state: present
+
+    - name: Install pipenv
+      pip:
+        executable: pip3
+        name: pipenv
+        state: present
