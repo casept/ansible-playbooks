@@ -39,7 +39,8 @@
     - {role: zim, when: install_desktop == true}
     - {role: i3, when: install_desktop == true}
     - {role: anki, when: install_desktop == true}
-    - {role: torbrowser, when: install_desktop=true and install_privacy=true}
+    - {role: wine, when: install_desktop == true}
+    - {role: torbrowser, when: install_desktop == true and install_privacy == true}
     - {role: megasync, when: install_desktop == true and install_cloud == true}
     - {role: printing, when: install_printing == true}
     - {role: discord, when: install_entertainment == true}
@@ -49,6 +50,7 @@
     - {role: bsdgames, when: install_entertainment == true}
     - {role: steam, when: install_entertainment == true}
     - {role: cmus, when: install_entertainment == true}
+    - {role: playonlinux, when: install_entertainment == true}
 
     - {role: golang, when: install_devtools == true}
     - {role: python, when: install_devtools == true}
