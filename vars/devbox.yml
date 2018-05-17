@@ -9,6 +9,7 @@ install_entetainment: true
 install_laptop: true
 install_cloud: true
 install_privacy: true
+install_printing: true
 
 # Locale setup
 locales_present: [en_US.UTF-8, end_DK.UTF-8, de_DE.UTF-8, POSIX]
