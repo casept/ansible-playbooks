@@ -1,0 +1,29 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: no
+  tasks:
+    - name: Install packages that the driver requires
+      apt:
+        package: [lib32z1, lib32ncurses5, "libcups2:i386", "libcupsimage2:i386", "libc6:i386", "libncurses5:i386", "libstdc++6:i386"]
+        state: present
+    - name: Create temporary directory for extracting driver zipball into
+      tempfile:
+        state: directory
+      register: e514dw_tempdir
+    - name: Download and extract driver zipball from Dell
+      unarchive:
+        src: https://downloads.dell.com/FOLDER03040876M/1/Printer_E514dw_Driver_Dell_A00_LINUX.zip
+        dest: "{{ e514dw_tempdir.path }}"
+        remote_src: true
+    - name: Install E514DW CUPS wrapper
+      apt:
+        deb: "{{ e514dw_tempdir.path }}/E514-Linux/e514dwcupswrapper-3.2.0-1.i386.deb"
+      notify: Restart CUPS
+    - name: Install E514DW LPR wrapper
+      apt:
+        deb: "{{ e514dw_tempdir.path }}/E514-Linux/e514dwlpr-3.2.0-1.i386.deb"
+      notify: Restart CUPS
+...
