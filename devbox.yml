@@ -59,6 +59,7 @@
     - {role: vagrant, when: install_devtools == true}
     - {role: vim, when: install_devtools == true}
     - {role: vscode, when: install_devtools == true and install_desktop == true}
+    - {role: shellcheck, when: install_devtools == true}
     - {role: zeal, when: install_devtools == true and install_desktop == true}
     - {role: vbindiff, when: install_devtools == true}
     - {role: tmux, when: install_devtools == true}
