@@ -15,13 +15,11 @@
         - DavidAnson.vscode-markdownlint
         - Shan.code-settings-sync
         - Tyriar.vscode-terminal-here
-        - actboy168.lua-debug
         - bungcip.better-toml
         - cssho.vscode-svgviewer
-        - eamodio.gitlens
         - hdg.live-html-previewer
         - jbw91.theme-material-dark-soda
-        - lukehoban.Go
+        - ms-vscode.Go
         - marcostazi.VS-code-vagrantfile
         - ms-python.python
         - ms-vscode.cpptools
@@ -32,5 +30,6 @@
         - vscodevim.vim
         - wayou.vscode-todo-highlight
         - vscoss.vscode-ansible
+        - thegtproject.hoverhex
       changed_when: "'is already installed.' not in code.stdout"
 ...
