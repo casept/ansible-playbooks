@@ -1,0 +1,18 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: no
+  tasks:
+    - name: Add caffeine PPA
+      apt_repository:
+        repo: "ppa:caffeine-developers/ppa"
+        state: present
+
+    - name: Install caffeine
+      apt:
+        package: caffeine
+        update_cache: yes
+        state: present
+...

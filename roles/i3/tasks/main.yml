@@ -24,4 +24,5 @@
 - import_playbook: playerctl.yml
 - import_playbook: pulseaudio.yml
 - import_playbook: scrot.yml
+- import_playbook: caffeine.yml
 ...
