@@ -1,0 +1,16 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: no
+  tasks:
+    - name: Install pulseaudio
+      with_items:
+        - pulseaudio
+        - pulseaudio-utils
+        - pavucontrol
+      apt:
+        name: "{{ item }}"
+        state: present
+...

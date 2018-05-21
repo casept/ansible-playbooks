@@ -17,44 +17,11 @@
       apt:
         name: "{{ item }}"
         state: present
-    - name: Install lightdm
-      with_items:
-        - lightdm
-        - lightdm-gtk-greeter
-      apt:
-        name: "{{ item }}"
-        state: present
-    - name: Install networkmanager stuff
-      apt:
-        name: network-manager-gnome
-        state: present
-    - name: Install blueman
-      apt:
-        name: blueman
-        state: present
-    - name: Install scrot
-      apt:
-        name: scrot
-        state: present
-    - name: Install pulseaudio stuff
-      with_items:
-        - pulseaudio
-        - pulseaudio-utils
-        - pavucontrol
-      apt:
-        name: "{{ item }}"
-        state: present
-    - name: Get URL pointing to the latest playerctl .deb
-      # Ignore linter warning abot wget - it's cleaner than the alternative.
-      args:
-        warn: false
-      shell: wget --quiet https://github.com/acrisci/playerctl/releases -O- | grep "_amd64.deb" | grep release | cut -d '"' -f2 | head -1 | sed "s/^/https:\/\/github.com/"
-      register: playerctl_latest_deb_url
-      failed_when: playerctl_latest_deb_url.rc > 0
-      changed_when: False
 
-    - name: Install playerctl
-      apt:
-        deb: "{{ playerctl_latest_deb_url.stdout }}"
-        state: present
+- import_playbook: blueman.yml
+- import_playbook: lightdm.yml
+- import_playbook: networkmanager.yml
+- import_playbook: playerctl.yml
+- import_playbook: pulseaudio.yml
+- import_playbook: scrot.yml
 ...

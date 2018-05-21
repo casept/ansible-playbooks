@@ -1,0 +1,15 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: no
+  tasks:
+    - name: Install lightdm
+      with_items:
+        - lightdm
+        - lightdm-gtk-greeter
+      apt:
+        name: "{{ item }}"
+        state: present
+...
