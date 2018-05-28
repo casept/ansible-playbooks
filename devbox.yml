@@ -51,6 +51,7 @@
     - {role: steam, when: install_entertainment == true}
     - {role: cmus, when: install_entertainment == true}
     - {role: playonlinux, when: install_entertainment == true}
+    - {role: vlc, when: install_entertainment == true}
 
     - {role: golang, when: install_devtools == true}
     - {role: python, when: install_devtools == true}
