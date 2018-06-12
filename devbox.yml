@@ -28,7 +28,7 @@
 
     - {role: virtualbox, when: install_virtualization == true}
 
-    - {role: firefox-nightly, when: install_desktop == true}
+    - {role: firefox, when: install_desktop == true}
     - {role: thunderbird, when: install_desktop == true}
     - {role: libreoffice, when: install_desktop == true}
     - {role: wine, when: install_desktop == true}
