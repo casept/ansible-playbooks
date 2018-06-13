@@ -8,13 +8,13 @@
   tasks:
     - name: Install python 2 and utils
       apt:
-        package: [python, python-pip, ipython]
+        package: [python, python-pip, ipython, python-flake8, pyflakes, pylint, python-autopep8, pydocstyle]
         update_cache: yes
         state: present
 
     - name: Install python 3 and utils
       apt:
-        package: [python3, python3-pip, ipython3]
+        package: [python3, python3-pip, ipython3, python3-flake8, pyflakes3, pylint3]
         update_cache: yes
         state: present
 
