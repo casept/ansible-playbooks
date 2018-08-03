@@ -1,16 +1,26 @@
 ---
-- hosts: all
+- name: Ensure dependencies of dotfile installation script are present
   become: yes
-  become_user: '{{local_username}}'
-  become_method: sudo
-  gather_facts: no
+  become_user: root
+  package:
+    name: [git, stow, python3-minimal]
+    state: present
 
-- name: clone dotfiles git repo into ~
+- name: Clone dotfiles git repo into the home directory
+  become: yes
+  become_user: '{{ username }}'
+  become_method: sudo
   git:
-    repo: 'https://github.com/{{gh_username}}/dotfiles'
+    repo: 'https://github.com/casept/dotfiles'
     dest: ~/dotfiles/
-    update: no
-    accept_hostkey: true
-  notify:
-    - Install dotfiles
+    update: yes
+    recursive: true
+
+- name: Install dotfiles
+  become: yes
+  become_user: '{{ username }}'
+  become_method: sudo
+  shell: cd ~/dotfiles && python3 install.py
+  register: dotfiles_output
+  changed_when: "'No files changed' not in dotfiles_output.stdout"
 ...
