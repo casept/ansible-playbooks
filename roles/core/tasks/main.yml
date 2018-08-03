@@ -1,6 +1,0 @@
----
-dependencies:
-  - {role: locales, tags: locales}
-  - configure-sshd
-  - dotfiles
-  - user-setup

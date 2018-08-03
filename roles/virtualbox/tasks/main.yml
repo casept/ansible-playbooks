@@ -39,3 +39,12 @@
         state: present
         update_cache: yes
       notify: install extension pack
+
+    - name: Permit the user to access arbitrary USB devices (needed for virtualbox USB passthrough)
+      user:
+        name: '{{ username }}'
+        groups: vboxusers
+        append: yes
+
+- import_playbook: install_extpack.yml
+...
