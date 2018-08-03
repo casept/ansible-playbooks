@@ -1,0 +1,4 @@
+---
+  - name: Restart tor
+    service: name=tor state=restarted
+...
