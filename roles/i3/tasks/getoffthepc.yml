@@ -1,0 +1,12 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: no
+  tasks:
+    - name: Install dependencies of the Get off the PC! script
+      apt:
+        name: python3-notify2
+        state: present
+...
