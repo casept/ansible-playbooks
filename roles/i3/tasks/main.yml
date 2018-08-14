@@ -12,12 +12,12 @@
     name: "{{ item }}"
     state: present
 
-- import_playbook: blueman.yml
-- import_playbook: lightdm.yml
-- import_playbook: networkmanager.yml
-- import_playbook: playerctl.yml
-- import_playbook: pulseaudio.yml
-- import_playbook: scrot.yml
-- import_playbook: caffeine.yml
-- import_playbook: getoffthepc.yml
+- import_tasks: blueman.yml
+- import_tasks: lightdm.yml
+- import_tasks: networkmanager.yml
+- import_tasks: playerctl.yml
+- import_tasks: pulseaudio.yml
+- import_tasks: scrot.yml
+- import_tasks: caffeine.yml
+- import_tasks: getoffthepc.yml
 ...

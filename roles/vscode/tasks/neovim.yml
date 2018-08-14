@@ -1,18 +1,12 @@
 ---
-- hosts: all
-  become: yes
-  become_user: root
-  become_method: sudo
-  gather_facts: no
-  tasks:
-    - name: Add neovim repo (needed for ex commands from the vim plugin to work)
-      apt_repository:
-        repo: "ppa:neovim-ppa/stable"
-        state: present
+- name: Add neovim repo (needed for ex commands from the vim plugin to work)
+  apt_repository:
+    repo: "ppa:neovim-ppa/stable"
+    state: present
 
-    - name: Install neovim
-      apt:
-        name: neovim
-        state: present
-        update_cache: yes
+- name: Install neovim
+  apt:
+    name: neovim
+    state: present
+    update_cache: yes
 ...

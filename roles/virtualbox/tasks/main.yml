@@ -40,5 +40,5 @@
     groups: vboxusers
     append: yes
 
-- import_playbook: install_extpack.yml
+- import_tasks: install_extpack.yml
 ...

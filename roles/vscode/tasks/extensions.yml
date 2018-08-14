@@ -1,35 +1,29 @@
 ---
-- import_playbook: neovim.yml
-- hosts: all
-  become: yes
-  become_user: '{{local_user}}'
-  become_method: sudo
-  gather_facts: no
-  tasks:
-    - name: Install extensions
-      command: code --install-extension '{{item}}'
-      register: code
-      with_items:
-        - AdamCaviness.theme-monokai-dark-soda
-        - Compulim.compulim-vscode-closetag
-        - DavidAnson.vscode-markdownlint
-        - Shan.code-settings-sync
-        - Tyriar.vscode-terminal-here
-        - bungcip.better-toml
-        - cssho.vscode-svgviewer
-        - hdg.live-html-previewer
-        - jbw91.theme-material-dark-soda
-        - ms-vscode.Go
-        - marcostazi.VS-code-vagrantfile
-        - ms-python.python
-        - ms-vscode.cpptools
-        - robertohuertasm.vscode-icons
-        - shardulm94.trailing-spaces
-        - timonwong.shellcheck
-        - vittorioromeo.expand-selection-to-scope
-        - vscodevim.vim
-        - wayou.vscode-todo-highlight
-        - vscoss.vscode-ansible
-        - thegtproject.hoverhex
-      changed_when: "'is already installed.' not in code.stdout"
+- import_tasks: neovim.yml
+- name: Install extensions
+  command: code --install-extension '{{item}}'
+  register: code
+  with_items:
+    - AdamCaviness.theme-monokai-dark-soda
+    - Compulim.compulim-vscode-closetag
+    - DavidAnson.vscode-markdownlint
+    - Shan.code-settings-sync
+    - Tyriar.vscode-terminal-here
+    - bungcip.better-toml
+    - cssho.vscode-svgviewer
+    - hdg.live-html-previewer
+    - jbw91.theme-material-dark-soda
+    - ms-vscode.Go
+    - marcostazi.VS-code-vagrantfile
+    - ms-python.python
+    - ms-vscode.cpptools
+    - robertohuertasm.vscode-icons
+    - shardulm94.trailing-spaces
+    - timonwong.shellcheck
+    - vittorioromeo.expand-selection-to-scope
+    - vscodevim.vim
+    - wayou.vscode-todo-highlight
+    - vscoss.vscode-ansible
+    - thegtproject.hoverhex
+  changed_when: "'is already installed.' not in code.stdout"
 ...

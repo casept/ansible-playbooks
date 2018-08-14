@@ -8,4 +8,4 @@
     package: system-config-printer-gnome
     state: present
 
-- import_playbook: drivers.yml
+- import_tasks: drivers.yml

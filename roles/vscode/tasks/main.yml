@@ -28,5 +28,5 @@
     update_cache: yes
 
 
-- import_playbook: extensions.yml
+- import_tasks: extensions.yml
 ...
