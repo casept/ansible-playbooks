@@ -1,18 +1,12 @@
 ---
-- hosts: all
-  become: yes
-  become_user: root
-  become_method: sudo
-  gather_facts: no
-  tasks:
-    - name: Add unofficial vim PPA
-      apt_repository:
-        repo: "ppa:jonathonf/vim"
-        state: present
+- name: Add unofficial vim PPA
+  apt_repository:
+    repo: "ppa:jonathonf/vim"
+    state: present
 
-    - name: Install vim
-      apt:
-        name: [vim-nox, vim-doc]
-        state: present
-        update_cache: yes
+- name: Install vim
+  apt:
+    name: [vim-nox, vim-doc]
+    state: present
+    update_cache: yes
 ...
