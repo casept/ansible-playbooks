@@ -1,32 +1,25 @@
 ---
+# TODO: Uncomment
+#- name: Common configuration
+  #  import_playbook: core.yml
 - hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: yes
+
   vars_files:
-    - devbox.yml
-
-  # Ask for user-creation credentials
-  vars_prompt:
-    - name: "local_username"
-      prompt: "Name of your user:"
-
-    - name: "local_password"
-      prompt: "The user's password:"
-      private: yes
-      confirm: yes
-      # TODO: Consider replacing with newer algo once support improves
-      encrypt: "sha512_crypt"
+    - vars/devbox.yml
 
   roles:
     - {role: ansible}
     - {role: locales}
-    - {role: configure-sshd}
-    - {role: dotfiles}
-    - {role: user-setup}
 
     - {role: docker, when: install_containerization == true}
     - {role: docker-compose, when: install_containerization == true}
     - {role: lxd, when: install_containerization == true}
 
-    - {role: virtualbox, when: install_virtualization == true}
+    - {role: virtualbox, username: "{{ ansible_user_id }}", when: install_virtualization == true}
 
     - {role: firefox, when: install_desktop == true}
     - {role: thunderbird, when: install_desktop == true}
