@@ -1,22 +1,17 @@
 ---
 # TODO:
 # Use a PPA/other source w/ automatic updates once provided by upstream
-- hosts: all
-  become: yes
-  become_user: root
-  become_method: sudo
-  tasks:
-    - name: Get URL pointing to the latest simplenote .deb
-      # Ignore linter warning abot wget - it's cleaner than the alternative.
-      args:
-        warn: false
-      shell: wget --quiet https://github.com/Automattic/simplenote-electron/releases -O- | grep "_amd64.deb" | grep release | cut -d '"' -f2 | head -1 | sed "s/^/https:\/\/github.com/"
-      register: simplenote_latest_deb_url
-      failed_when: simplenote_latest_deb_url.rc > 0
-      changed_when: False
+- name: Get URL pointing to the latest simplenote .deb
+  # Ignore linter warning abot wget - it's cleaner than the alternative.
+  args:
+    warn: false
+  shell: wget --quiet https://github.com/Automattic/simplenote-electron/releases -O- | grep "_amd64.deb" | grep release | cut -d '"' -f2 | head -1 | sed "s/^/https:\/\/github.com/"
+  register: simplenote_latest_deb_url
+  failed_when: simplenote_latest_deb_url.rc > 0
+  changed_when: False
 
-    - name: Install simplenote
-      apt:
-        deb: "{{ simplenote_latest_deb_url.stdout }}"
-        state: present
+- name: Install simplenote
+  apt:
+    deb: "{{ simplenote_latest_deb_url.stdout }}"
+    state: present
 ...

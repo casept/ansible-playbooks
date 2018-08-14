@@ -1,59 +1,51 @@
 ---
-- hosts: all
-  become: yes
-  become_user: root
-  become_method: sudo
-  gather_facts: yes
-
-  tasks:
-    - name: Add ansible PPA
-      apt_repository:
-        repo: "ppa:ansible/ansible"
-        state: present
-      # Debian needs the PPA added manually
-      when: ansible_distribution == 'Ubuntu'
+- name: Add ansible PPA
+  apt_repository:
+    repo: "ppa:ansible/ansible"
+    state: present
+  # Debian needs the PPA added manually
+  when: ansible_distribution == 'Ubuntu'
 
 
-    - name: Add ansible PPA (Debian)
-      apt_repository:
-        repo: "deb http://ppa.launchpad.net/ansible/ansible/ubuntu xenial main"
-        state: present
-      # Debian needs the PPA added manually
-      when: ansible_distribution == 'Debian'
+- name: Add ansible PPA (Debian)
+  apt_repository:
+    repo: "deb http://ppa.launchpad.net/ansible/ansible/ubuntu xenial main"
+    state: present
+  # Debian needs the PPA added manually
+  when: ansible_distribution == 'Debian'
 
 
-    - name: Add ansible PPA PGP key (Debian)
-      apt_key:
-        keyserver: keyserver.ubuntu.com
-        state: present
-        id: "93C4A3FD7BB9C367"
-      when: ansible_distribution == 'Debian'
+- name: Add ansible PPA PGP key (Debian)
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    state: present
+    id: "93C4A3FD7BB9C367"
+  when: ansible_distribution == 'Debian'
 
-    - name: Install ansible
-      apt:
-        package: [ansible]
-        update_cache: yes
-        state: present
+- name: Install ansible
+  apt:
+    package: [ansible]
+    update_cache: yes
+    state: present
 
-    - name: Install pip2
-      apt:
-        package: [python-pip]
-        update_cache: no
-        state: present
+- name: Install pip2
+  apt:
+    package: [python-pip]
+    update_cache: no
+    state: present
 
-    - name: Install ansible-lint
-      pip:
-        name:
-          - ansible-lint
-        # Make sure it doesn't try to pull ansible from pip
-        extra_args: --no-deps
-        state: present
+- name: Install ansible-lint
+  pip:
+    name:
+      - ansible-lint
+    # Make sure it doesn't try to pull ansible from pip
+    extra_args: --no-deps
+    state: present
 
-    - name: Install passlib
-      apt:
-        name:
-          - python-passlib
-          - python3-passlib
-        state: present
-
+- name: Install passlib
+  apt:
+    name:
+      - python-passlib
+      - python3-passlib
+    state: present
 ...

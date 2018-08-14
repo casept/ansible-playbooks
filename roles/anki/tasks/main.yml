@@ -1,109 +1,103 @@
 ---
-- hosts: all
-  become: yes
-  become_user: root
-  become_method: sudo
-  gather_facts: no
-  tasks:
-    - name: Get URL pointing to the latest anki version
-      # Forgive the use of wget - it's much cleaner than the alternative.
-      args:
-        warn: false
-      shell: wget --quiet https://apps.ankiweb.net/ -O- | grep -o "/downloads/current/.*amd64.tar.bz2" | awk '{print "https://apps.ankiweb.net", $0;}' | tr -d ' '
-      register: anki_latest_url
-      failed_when: anki_latest_url.rc > 0
-      changed_when: False
+- name: Get URL pointing to the latest anki version
+  # Forgive the use of wget - it's much cleaner than the alternative.
+  args:
+    warn: false
+  shell: wget --quiet https://apps.ankiweb.net/ -O- | grep -o "/downloads/current/.*amd64.tar.bz2" | awk '{print "https://apps.ankiweb.net", $0;}' | tr -d ' '
+  register: anki_latest_url
+  failed_when: anki_latest_url.rc > 0
+  changed_when: False
 
 
-    - name: Check if anki is installed
-      stat:
-        path: /opt/anki/bin/anki
-      register: anki_stat_result
+- name: Check if anki is installed
+  stat:
+    path: /opt/anki/bin/anki
+  register: anki_stat_result
 
-    - name: Get installed anki version
-      # Only run when anki is already installed
-      when: anki_stat_result.stat.exists == True
-      args:
-        warn: false
-      shell: /opt/anki/bin/anki --version | cut -d ' ' -f2
-      changed_when: False
-      register: installed_version
+- name: Get installed anki version
+  # Only run when anki is already installed
+  when: anki_stat_result.stat.exists == True
+  args:
+    warn: false
+  shell: /opt/anki/bin/anki --version | cut -d ' ' -f2
+  changed_when: False
+  register: installed_version
 
-    # TODO: Clean this up
-    - name: Set installed anki version to an empty string if not installed
-      when: anki_stat_result.stat.exists == False
-      # Just so there's something to write to stdout
-      shell: "echo ' '"
-      changed_when: False
-      # Register changes the variable even on skipped tasks, see https://github.com/ansible/ansible/issues/4297#issuecomment-356427588 for a workaround
-      register: "{{'installed_version' if anki_stat_result.stat.exists == False else 'placeholder'}}"
+# TODO: Clean this up
+- name: Set installed anki version to an empty string if not installed
+  when: anki_stat_result.stat.exists == False
+  # Just so there's something to write to stdout
+  shell: "echo ' '"
+  changed_when: False
+  # Register changes the variable even on skipped tasks, see https://github.com/ansible/ansible/issues/4297#issuecomment-356427588 for a workaround
+  register: "{{'installed_version' if anki_stat_result.stat.exists == False else 'placeholder'}}"
 
-    - name: Get latest available anki version from download URL
-      args:
-        warn: false
-      shell: "echo {{ anki_latest_url.stdout }} | grep -E -o [0-9]+.[0-9]+.[0-9]*"
-      changed_when: False
-      register: latest_version
+- name: Get latest available anki version from download URL
+  args:
+    warn: false
+  shell: "echo {{ anki_latest_url.stdout }} | grep -E -o [0-9]+.[0-9]+.[0-9]*"
+  changed_when: False
+  register: latest_version
 
-    - name: Check if latest anki version is newer than installed version
-      when: installed_version.stdout != latest_version.stdout
-      set_fact:
-        should_install: True
+- name: Check if latest anki version is newer than installed version
+  when: installed_version.stdout != latest_version.stdout
+  set_fact:
+    should_install: True
 
-    - name: Mark for installation if anki isn't installed yet
-      when: anki_stat_result.stat.exists == False
-      set_fact:
-        should_install: True
+- name: Mark for installation if anki isn't installed yet
+  when: anki_stat_result.stat.exists == False
+  set_fact:
+    should_install: True
 
-    - name: Skip installation if anki is present and at the latest version already
-    # All the checks have been done already, no need to recheck
-      when: should_install is not defined
-      set_fact:
-        should_install: False
+- name: Skip installation if anki is present and at the latest version already
+# All the checks have been done already, no need to recheck
+  when: should_install is not defined
+  set_fact:
+    should_install: False
 
-    - name: Create anki directory
-      file:
-        path: /opt/anki/
-        state: directory
+- name: Create anki directory
+  file:
+    path: /opt/anki/
+    state: directory
 
-    # Needed because the tarball expands to an anki-version/ directory instead of directly into a directory containing bin/ and so on.
-    - name: Create temporary directory for extracting anki into
-      when: should_install == True
-      tempfile:
-        state: directory
-      register: anki_tempdir
+# Needed because the tarball expands to an anki-version/ directory instead of directly into a directory containing bin/ and so on.
+- name: Create temporary directory for extracting anki into
+  when: should_install == True
+  tempfile:
+    state: directory
+  register: anki_tempdir
 
-    - name: Download and extract anki
-      when: should_install == True
-      unarchive:
-        src: "{{ anki_latest_url.stdout }}"
-        dest: "{{ anki_tempdir.path }}"
-        remote_src: true
+- name: Download and extract anki
+  when: should_install == True
+  unarchive:
+    src: "{{ anki_latest_url.stdout }}"
+    dest: "{{ anki_tempdir.path }}"
+    remote_src: true
 
-    - name: Find anki directory name
-      when: should_install == True
-      find:
-        paths: "{{ anki_tempdir.path }}"
-        recurse: no
-        file_type: directory
-        use_regex: yes
-        patterns: "anki-.*"
-      register: anki_tempinstalldir
+- name: Find anki directory name
+  when: should_install == True
+  find:
+    paths: "{{ anki_tempdir.path }}"
+    recurse: no
+    file_type: directory
+    use_regex: yes
+    patterns: "anki-.*"
+  register: anki_tempinstalldir
 
-    - name: Copy anki into install directory
-      when: should_install == True
-    # The copy module does not support recursive copying on remote.
-      shell: "cp -r {{ anki_tempinstalldir.files[0]['path'] }}/. /opt/anki/"
+- name: Copy anki into install directory
+  when: should_install == True
+# The copy module does not support recursive copying on remote.
+  shell: "cp -r {{ anki_tempinstalldir.files[0]['path'] }}/. /opt/anki/"
 
-    - name: Symlink anki into /usr/local/bin
-      file:
-        src: /opt/anki/bin/anki
-        dest: /usr/local/bin/anki
-        state: link
+- name: Symlink anki into /usr/local/bin
+  file:
+    src: /opt/anki/bin/anki
+    dest: /usr/local/bin/anki
+    state: link
 
-    - name: Symlink anki .desktop file
-      file:
-        src: /opt/anki/anki.desktop
-        dest: /usr/local/share/applications/anki.desktop
-        state: link
+- name: Symlink anki .desktop file
+  file:
+    src: /opt/anki/anki.desktop
+    dest: /usr/local/share/applications/anki.desktop
+    state: link
 ...

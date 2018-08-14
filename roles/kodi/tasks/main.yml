@@ -1,18 +1,12 @@
 ---
-- hosts: all
-  become: yes
-  become_user: root
-  become_method: sudo
-  gather_facts: no
+- name: Add kodi PPA
+  apt_repository:
+    repo: "ppa:team-xbmc/ppa"
+    state: present
 
-  tasks:
-    - name: Add kodi PPA
-      apt_repository:
-        repo: "ppa:team-xbmc/ppa"
-        state: present
-
-    - name: Install kodi
-      apt:
-        package: [kodi]
-        update_cache: yes
-        state: present
+- name: Install kodi
+  apt:
+    package: [kodi]
+    update_cache: yes
+    state: present
+...

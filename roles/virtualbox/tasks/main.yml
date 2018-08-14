@@ -1,50 +1,44 @@
 ---
-- hosts: all
-  become: yes
-  become_user: root
-  become_method: sudo
-  gather_facts: yes
-  tasks:
-    - name: Ensure apt can download over HTTPS
-      apt:
-        name:
-          - apt-transport-https
-          - ca-certificates
-          - curl
-          - software-properties-common
-        state: present
+- name: Ensure apt can download over HTTPS
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+    state: present
 
-    - name: Ensure dkms is installed
-      apt:
-        name: dkms
-        state: present
+- name: Ensure dkms is installed
+  apt:
+    name: dkms
+    state: present
 
-    - name: Add virtualbox repo key
-      apt_key:
-        # Key is the same for ubuntu and debian
-        url: https://www.virtualbox.org/download/oracle_vbox_2016.asc
-        state: present
-        id: "B9F8D658297AF3EFC18D5CDFA2F683C52980AECF"
+- name: Add virtualbox repo key
+  apt_key:
+    # Key is the same for ubuntu and debian
+    url: https://www.virtualbox.org/download/oracle_vbox_2016.asc
+    state: present
+    id: "B9F8D658297AF3EFC18D5CDFA2F683C52980AECF"
 
-    - name: Add virtualbox repo
-      apt_repository:
-        repo: deb https://download.virtualbox.org/virtualbox/debian {{ansible_distribution_release}} contrib
-        # Needed so vscode doesn't generate a duplicate file in sources.list.d/
-        filename: virtualbox
-        state: present
+- name: Add virtualbox repo
+  apt_repository:
+    repo: deb https://download.virtualbox.org/virtualbox/debian {{ansible_distribution_release}} contrib
+    # Needed so vscode doesn't generate a duplicate file in sources.list.d/
+    filename: virtualbox
+    state: present
 
-    - name: Install virtualbox base
-      apt:
-        name: virtualbox-5.2
-        state: present
-        update_cache: yes
-      notify: install extension pack
+- name: Install virtualbox base
+  apt:
+    name: virtualbox-5.2
+    state: present
+    update_cache: yes
+  notify: install extension pack
 
-    - name: Permit the user to access arbitrary USB devices (needed for virtualbox USB passthrough)
-      user:
-        name: '{{ username }}'
-        groups: vboxusers
-        append: yes
+- name: Permit the user to access arbitrary USB devices (needed for virtualbox USB passthrough)
+  user:
+    name: '{{ username }}'
+    groups: vboxusers
+    append: yes
 
 - import_playbook: install_extpack.yml
 ...

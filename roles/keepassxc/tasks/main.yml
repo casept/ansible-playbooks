@@ -1,19 +1,12 @@
 ---
-- hosts: all
-  become: yes
-  become_user: root
-  become_method: sudo
-  gather_facts: no
+- name: Add keepassXC PPA
+  apt_repository:
+    repo: "ppa:phoerious/keepassxc"
+    state: present
 
-  tasks:
-    - name: Add keepassXC PPA
-      apt_repository:
-        repo: "ppa:phoerious/keepassxc"
-        state: present
-
-    - name: Install keepassXC
-      apt:
-        package: [keepassxc]
-        update_cache: yes
-        state: present
+- name: Install keepassXC
+  apt:
+    package: [keepassxc]
+    update_cache: yes
+    state: present
 ...

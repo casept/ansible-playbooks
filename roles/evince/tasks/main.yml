@@ -1,13 +1,6 @@
 ---
-- hosts: all
-  become: yes
-  become_user: root
-  become_method: sudo
-  gather_facts: no
-
-  tasks:
-    - name: Install evince
-      apt:
-        package: evince
-        state: present
+- name: Install evince
+  apt:
+    package: evince
+    state: present
 ...

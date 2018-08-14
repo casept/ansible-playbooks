@@ -1,22 +1,16 @@
 ---
-- hosts: all
-  become: yes
-  become_user: root
-  become_method: sudo
-  gather_facts: no
-  tasks:
-    - name: Install i3 and some utilities
-      with_items:
-        - i3
-        - i3lock
-        - i3status
-        - dmenu
-        - feh
-        - xautolock
-        - dunst
-      apt:
-        name: "{{ item }}"
-        state: present
+- name: Install i3 and some utilities
+  with_items:
+    - i3
+    - i3lock
+    - i3status
+    - dmenu
+    - feh
+    - xautolock
+    - dunst
+  apt:
+    name: "{{ item }}"
+    state: present
 
 - import_playbook: blueman.yml
 - import_playbook: lightdm.yml

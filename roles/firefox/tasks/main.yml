@@ -1,19 +1,12 @@
 ---
-- hosts: all
-  become: yes
-  become_user: root
-  become_method: sudo
-  gather_facts: no
+- name: Add firefox PPA
+  apt_repository:
+    repo: "ppa:mozillateam/firefox-next"
+    state: present
 
-  tasks:
-    - name: Add firefox PPA
-      apt_repository:
-        repo: "ppa:mozillateam/firefox-next"
-        state: present
-
-    - name: Install firefox
-      apt:
-        package: [firefox]
-        update_cache: yes
-        state: present
+- name: Install firefox
+  apt:
+    package: [firefox]
+    update_cache: yes
+    state: present
 ...

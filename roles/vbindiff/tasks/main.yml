@@ -1,12 +1,6 @@
 ---
-- hosts: all
-  become: yes
-  become_user: root
-  become_method: sudo
-  gather_facts: no
-  tasks:
-    - name: Install vbindiff
-      apt:
-        name: vbindiff
-        state: present
+- name: Install vbindiff
+  apt:
+    name: vbindiff
+    state: present
 ...

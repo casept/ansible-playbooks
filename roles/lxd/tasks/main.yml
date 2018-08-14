@@ -1,28 +1,21 @@
 ---
-- hosts: all
-  become: yes
-  become_user: root
-  become_method: sudo
-  gather_facts: yes
+- name: Ensure snapd is installed
+  package:
+    name: snapd
+    state: present
 
-  tasks:
-  - name: Ensure snapd is installed
-    package:
-      name: snapd
-      state: present
+- name: Check whether LXD snap is already installed
+  # TODO: Replace with snap module once available
+  command: "snap list"
+  register: installed_snaps
+  changed_when: false
 
-  - name: Check whether LXD snap is already installed
-    # TODO: Replace with snap module once available
-    command: "snap list"
-    register: installed_snaps
-    changed_when: false
-
-  - name: Install LXD snap
-    command: "snap install lxd"
-    when: "'lxd' not in installed_snaps.stdout"
+- name: Install LXD snap
+  command: "snap install lxd"
+  when: "'lxd' not in installed_snaps.stdout"
 
 
-  - name: Initialize LXD
-    args:
-      warn: false
-    shell: lxd init --auto && touch /var/lib/lxd/ansible-lxd-init creates=/var/lib/lxd/ansible-lxd-init
+- name: Initialize LXD
+  args:
+    warn: false
+  shell: lxd init --auto && touch /var/lib/lxd/ansible-lxd-init creates=/var/lib/lxd/ansible-lxd-init

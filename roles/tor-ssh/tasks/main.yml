@@ -1,36 +1,30 @@
 ---
-- hosts: all
-  become: yes
-  become_user: root
-  become_method: sudo
-  gather_facts: no
-  tasks:
-    - name: Install tor
-      apt:
-        name: tor
-        state: present
+- name: Install tor
+  apt:
+    name: tor
+    state: present
 
-    - name: Set SSH hidden service key directory
-      lineinfile:
-        dest: "/etc/tor/torrc"
-        line: "HiddenServiceDir /var/lib/tor/ssh"
-        insertafter: "EOF"
-      notify: "Restart tor"
+- name: Set SSH hidden service key directory
+  lineinfile:
+    dest: "/etc/tor/torrc"
+    line: "HiddenServiceDir /var/lib/tor/ssh"
+    insertafter: "EOF"
+  notify: "Restart tor"
 
-    - name: Set SSH hidden service port
-      lineinfile:
-        dest: "/etc/tor/torrc"
-        line: 'HiddenServicePort {{ ssh_port }} 127.0.0.1:{{ssh_port}}'
-        insertafter: "EOF"
-      notify: "Restart tor"
+- name: Set SSH hidden service port
+  lineinfile:
+    dest: "/etc/tor/torrc"
+    line: 'HiddenServicePort {{ ssh_port }} 127.0.0.1:{{ssh_port}}'
+    insertafter: "EOF"
+  notify: "Restart tor"
 
-    # The hidden service's key is only generated when the service has restarted
-    - meta: flush_handlers
+# The hidden service's key is only generated when the service has restarted
+- meta: flush_handlers
 
-    - name: Retrieve the address of the hidden service and store it under /tmp/ssh-hidden-addresses/ on the master
-      fetch:
-        src: "/var/lib/tor/ssh/hostname"
-        dest: "/tmp/ssh-hidden-addresses/"
-        fail_on_missing: yes
+- name: Retrieve the address of the hidden service and store it under /tmp/ssh-hidden-addresses/ on the master
+  fetch:
+    src: "/var/lib/tor/ssh/hostname"
+    dest: "/tmp/ssh-hidden-addresses/"
+    fail_on_missing: yes
 
 ...

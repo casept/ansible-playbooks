@@ -1,18 +1,11 @@
 ---
-- hosts: all
-  become: yes
-  become_user: root
-  become_method: sudo
-  gather_facts: no
-
-  tasks:
-    - name: Install CUPS
-      apt:
-        package: cups
-        state: present
-    - name: Install system-config-printer
-      apt:
-        package: system-config-printer-gnome
-        state: present
+- name: Install CUPS
+  apt:
+    package: cups
+    state: present
+- name: Install system-config-printer
+  apt:
+    package: system-config-printer-gnome
+    state: present
 
 - import_playbook: drivers.yml

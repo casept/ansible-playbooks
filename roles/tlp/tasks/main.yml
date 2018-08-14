@@ -1,19 +1,13 @@
 ---
-- hosts: all
-  become: yes
-  become_user: root
-  become_method: sudo
-  gather_facts: no
-  tasks:
-    - name: Install TLP
-      apt:
-        name: [tlp, tlp-rdw, smartmontools, ethtool]
-        state: present
-        update_cache: yes
-      notify: "Start tlp"
+- name: Install TLP
+  apt:
+    name: [tlp, tlp-rdw, smartmontools, ethtool]
+    state: present
+    update_cache: yes
+  notify: "Start tlp"
 
-    - name: Install thinkpad-specific tools (if needed)
-      apt:
-        name: [tp-smapi-dkms, acpi-call-dkms]
-        state: present
+- name: Install thinkpad-specific tools (if needed)
+  apt:
+    name: [tp-smapi-dkms, acpi-call-dkms]
+    state: present
 ...

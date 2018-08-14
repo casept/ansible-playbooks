@@ -1,38 +1,32 @@
 ---
-- hosts: all
-  become: yes
-  become_user: root
-  become_method: sudo
-  gather_facts: no
-  tasks:
-    - name: Get URL pointing to the latest golang version
-      # Forgive the use of wget - it's much cleaner than the alternative.
-      args:
-        warn: false
-      shell: wget --quiet https://golang.org/dl/ -O- | grep linux-amd64.tar.gz | cut -d '"' -f6 | sed -n '3p'
-      register: golang_latest_url
-      failed_when: golang_latest_url.rc > 0
-      changed_when: False
+- name: Get URL pointing to the latest golang version
+  # Forgive the use of wget - it's much cleaner than the alternative.
+  args:
+    warn: false
+  shell: wget --quiet https://golang.org/dl/ -O- | grep linux-amd64.tar.gz | cut -d '"' -f6 | sed -n '3p'
+  register: golang_latest_url
+  failed_when: golang_latest_url.rc > 0
+  changed_when: False
 
-    - name: Download golang
-      get_url:
-        url: "{{ golang_latest_url.stdout }}"
-        dest: /tmp/golang.tar.gz
-        remote_src: true
+- name: Download golang
+  get_url:
+    url: "{{ golang_latest_url.stdout }}"
+    dest: /tmp/golang.tar.gz
+    remote_src: true
 
-    - name: Install golang
-      unarchive:
-        src: /tmp/golang.tar.gz
-        dest: /usr/local/
-        remote_src: true
+- name: Install golang
+  unarchive:
+    src: /tmp/golang.tar.gz
+    dest: /usr/local/
+    remote_src: true
 
-    - name: Symlink binaries in $GOROOT/bin into /usr/local/bin
-      file:
-        src: /usr/local/go/bin/{{ item }}
-        dest: /usr/local/bin/{{ item }}
-        state: link
-      with_items:
-        - go
-        - godoc
-        - gofmt
+- name: Symlink binaries in $GOROOT/bin into /usr/local/bin
+  file:
+    src: /usr/local/go/bin/{{ item }}
+    dest: /usr/local/bin/{{ item }}
+    state: link
+  with_items:
+    - go
+    - godoc
+    - gofmt
 ...

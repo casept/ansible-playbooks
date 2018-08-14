@@ -1,22 +1,15 @@
 ---
-- hosts: all
-  become: yes
-  become_user: root
-  become_method: sudo
-  gather_facts: no
-
-  tasks:
-    - name: Install libreoffice
-      apt:
-        package: libreoffice
-        state: present
+- name: Install libreoffice
+  apt:
+    package: libreoffice
+    state: present
 
 
-    - name: Install libreoffice german localization
-      with_items:
-        - libreoffice-l10n-de
-        - libreoffice-help-de
-      apt:
-        package: "{{ item }}"
-        state: present
+- name: Install libreoffice german localization
+  with_items:
+    - libreoffice-l10n-de
+    - libreoffice-help-de
+  apt:
+    package: "{{ item }}"
+    state: present
 ...
