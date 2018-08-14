@@ -16,6 +16,10 @@
         alias: ubuntu/bionic/amd64
         profiles: ["default"]
       ephemeral: true
+      config:
+        security.privileged: "true"
+        security.nesting: "true"
+
       # LXD snap doesn't expose default unix socket
       url: https://127.0.0.1:8443
       timeout: 300
