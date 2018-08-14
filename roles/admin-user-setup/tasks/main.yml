@@ -69,6 +69,7 @@
   stat:
     path: /etc/sudoers.d/nopasswders
   register: nopasswders_exists
+  changed_when: false
 
 - name: Create the nopasswders config file in /etc/sudoers.d/
   become: yes
