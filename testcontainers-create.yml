@@ -1,0 +1,22 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+  - name: Create ubuntu bionic test container
+    lxd_container:
+      name: ubuntu-bionic-ansible
+      state: started
+      wait_for_ipv4_addresses: true
+      source:
+        type: image
+        mode: pull
+        server: https://images.linuxcontainers.org
+        protocol: lxd
+        alias: ubuntu/bionic/amd64
+        profiles: ["default"]
+      ephemeral: true
+      # LXD snap doesn't expose default unix socket
+      url: https://127.0.0.1:8443
+      timeout: 300
+...

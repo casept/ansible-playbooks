@@ -1,0 +1,11 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+  - name: Remove ubuntu bionic test container
+    lxd_container:
+      name: ubuntu-bionic-ansible
+      state: absent
+      url: https://127.0.0.1:8443
+...

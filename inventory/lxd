@@ -1,0 +1,1 @@
+ubuntu-bionic-ansible ansible_connection=lxd
