@@ -7,10 +7,38 @@
 
 # The containers are created on the host using an ansible playbook,
 # and destroyed using a different playbook.
-if [[ $1 == "create" ]]; then
+
+
+function create {
 	ansible-playbook testcontainers-create.yml
+}
+
+function destroy {
+	ansible-playbook testcontainers-destroy.yml
+}
+
+function recreate {
+	destroy
+	create
+}
+
+function usage {
+	echo "Usage: $0 [create|destroy|recreate]"
+	exit 1
+}
+
+if [ "$1" != "create" ] && [ "$1" != "destroy" ] && [ "$1" != "recreate" ]; then
+	usage "$@"
+fi
+
+if [[ $1 == "create" ]]; then
+	create
 fi
 
 if [[ $1 == "destroy" ]]; then
-	ansible-playbook testcontainers-destroy.yml
+	destroy
+fi
+
+if [[ $1 == "recreate" ]]; then
+	recreate
 fi
