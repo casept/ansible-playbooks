@@ -16,12 +16,21 @@
 
 - name: Add wine repo
   apt_repository:
-    repo: "deb https://dl.winehq.org/wine-builds/ubuntu/ {{ansible_distribution_release}} main"
+    repo: "deb https://dl.winehq.org/wine-builds/{{ansible_distribution | lower}}/ {{ansible_distribution_release}} main"
     state: present
+
+- name: Check whether dpkg i386 architecture is enabled
+  command: "dpkg --print-foreign-architectures"
+  register: foreign_arches
+  changed_when: false
+
+- name: Enable dpkg i386 architecture
+  command: "dpkg --add-architecture i386"
+  when: "'i386' not in foreign_arches.stdout"
 
 - name: Install wine
   apt:
-    name: wine-stable
+    name: winehq-stable
     state: present
     install_recommends: yes
     update_cache: yes
