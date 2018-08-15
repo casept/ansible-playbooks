@@ -4,6 +4,13 @@
     name: snapd
     state: present
 
+
+- name: Ensure system-packaged LXD is removed
+  apt:
+    name: [lxd, lxd-client]
+    state: absent
+    autoremove: true
+
 - name: Check whether LXD snap is already installed
   # TODO: Replace with snap module once available
   command: "snap list"
