@@ -1,13 +1,14 @@
-# My ansible playbooks for setting up machines
+# My ansible playbooks
 
-These are my private ansible playbooks and related files, mostly to set up my workstations.
-They're tailored only to my needs, so distros other than ubuntu are untested (and non-deb based ones won't work).
+These are my private ansible playbooks and related files for setting up my machines.
+They're tailored only to my needs, so distros other than ubuntu bionic are untested (and non-deb based ones won't work).
 
 ## Installation
 
 ```shell
 git clone --recursive https://github.com/casept/ansible-playbooks
 cd ansible-playbooks
-# Edit the vars/devbox.yml file to your liking (Important! If you don't do this you'll get my SSH public key installed onto your box!)
-bin/devbox
+# The plays are in the root directory.
+# core.yml does everything needed to prepare a host for other plays, so run that first.
+# Remember to replace my SSH keys in vars/ssh_keys.yml with your own.
 ```
