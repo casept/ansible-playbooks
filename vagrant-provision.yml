@@ -1,14 +1,4 @@
 ---
-- hosts: all
-  become: yes
-  become_user: root
-  become_method: sudo
-  gather_facts: no
-  tasks:
-  - name: Make sure python is installed
-    raw: bash -c "test -e /usr/bin/python || (apt-get -y update && apt-get install -y python-minimal)"
-    args:
-      executable: /bin/sh
-    register: output
-    changed_when: output.stdout
+- name: Provision vagrant VM
+  import_playbook: raw-python.yml
 ...
