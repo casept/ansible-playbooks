@@ -1,0 +1,13 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: yes
+  tasks:
+  - name: Set up LXD
+    include_role:
+      name: lxd
+    vars:
+      setup_bridge: true
+...

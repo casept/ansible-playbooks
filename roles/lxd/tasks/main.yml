@@ -20,9 +20,72 @@
 - name: Install LXD snap
   command: "snap install lxd"
   when: "'lxd' not in installed_snaps.stdout"
+  register: lxd_installation
 
+- name: Reboot if the snap was installed
+  shell: "sleep 5 && reboot"
+  args:
+    warn: false
+  async: 1
+  poll: 0
+  when: lxd_installation is changed
 
+- name: Wait for the reboot to complete if the snap was installed
+  wait_for_connection:
+    connect_timeout: 20
+    sleep: 5
+    delay: 5
+    timeout: 600
+  when: lxd_installation is changed
+
+- name: Determine the name of the main ethernet interface for use in bridging if not specified
+  shell: "ls /sys/class/net | grep en | head -1"
+  args:
+    warn: false
+  changed_when: false
+  when: bridge_ethernet_interface is not defined and setup_bridge
+  register: bridge_ethernet_interface_autodetermined
+
+- name: Set the bridge's ethernet interface to the autodetermined one
+  set_fact: bridge_ethernet_interface="{{  bridge_ethernet_interface_autodetermined.stdout }}"
+  when: bridge_ethernet_interface is not defined
+
+- name: Configure netplan bridge interface
+  template:
+    src: templates/99-lxd-bridge.yaml.j2
+    dest: /etc/netplan/99-lxd-bridge.yaml
+  when: setup_bridge is defined and setup_bridge
+  register: netplan_config
+
+- name: Apply netplan configuration and reboot
+  shell: "netplan apply && reboot"
+  async: 1
+  poll: 0
+  ignore_errors: true
+  when: netplan_config is changed
+
+- name: Wait for the reboot to complete if the bridge was added
+  wait_for_connection:
+    connect_timeout: 20
+    sleep: 5
+    delay: 20
+    timeout: 600
+  when: netplan_config is changed
+
+- name: Copy bridged LXD configuration
+  copy:
+    src: files/lxd-bridge-preseed.yml
+    dest: /etc/lxd-bridge-preseed.yml
+  when: setup_bridge is defined and setup_bridge
+
+- name: Initialize bridged LXD
+  shell: lxd init --preseed < /etc/lxd-bridge-preseed.yml && rm -f /etc/ansible-lxd-init && touch /etc/ansible-lxd-bridge-init creates=/etc/ansible-lxd-bridge-init
+  args:
+    warn: false
+# Don't forget to mark bridged LXD as initialized and nonbridget as not!
+# Run auto init when no bridge is desired
 - name: Initialize LXD
   args:
     warn: false
-  shell: lxd init --auto && touch /var/lib/lxd/ansible-lxd-init creates=/var/lib/lxd/ansible-lxd-init
+  shell: lxd init --auto && touch /etc/ansible-lxd-init && rm -f /etc/ansible-lxd-bridge-init creates=/etc/ansible-lxd-init
+  when: setup_bridge is not defined or not setup_bridge
