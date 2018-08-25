@@ -1,0 +1,6 @@
+---
+- name: Install mosh
+  package:
+    name: mosh
+    state: present
+...

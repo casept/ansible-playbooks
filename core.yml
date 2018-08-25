@@ -15,15 +15,6 @@
   vars_files:
     - vars/ssh_keys.yml
 
-#  pre_tasks:
-#  - name: Make sure python is installed
-#    raw: bash -c "test -e /usr/bin/python || (apt-get -y update && apt-get install -y python-minimal)"
-#    args:
-#      executable: /bin/sh
-#    register: output
-#    changed_when: output.stdout
-
-
   tasks:
   - name: Set up the ansible user
     include_role:
@@ -54,6 +45,11 @@
   - name: Set up SSHD
     include_role:
       name: configure-sshd
+
+
+  - name: Install mosh
+    include_role:
+      name: mosh
 
   - name: Configure unattended upgrades
     include_role:
