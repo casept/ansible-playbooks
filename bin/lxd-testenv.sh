@@ -10,11 +10,11 @@
 
 
 function create {
-	ansible-playbook testcontainers-create.yml
+	ansible-playbook -i inventory/lxd-testenv testcontainers-create.yml
 }
 
 function destroy {
-	ansible-playbook testcontainers-destroy.yml
+	ansible-playbook -i inventory/lxd-testenv testcontainers-destroy.yml
 }
 
 function recreate {

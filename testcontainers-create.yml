@@ -23,4 +23,12 @@
       # LXD snap doesn't expose default unix socket
       url: https://127.0.0.1:8443
       timeout: 300
+
+  - name: Install python in the container
+    raw: bash -c "test -e /usr/bin/python || (apt-get -y update && apt-get install -y python-minimal)"
+    args:
+      executable: /bin/sh
+    register: output
+    changed_when: output.stdout
+    delegate_to: ubuntu-bionic-ansible
 ...
