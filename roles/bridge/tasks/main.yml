@@ -1,0 +1,37 @@
+---
+- name: Determine the name of the main ethernet interface for use in bridging if not specified
+  shell: "ls /sys/class/net | grep -E 'en|eth' | head -1"
+  args:
+    warn: false
+  changed_when: false
+  when: bridge_ethernet_interface is not defined
+  register: bridge_ethernet_interface_autodetermined
+
+- name: Set the bridge ethernet interface to the autodetermined one
+  set_fact: bridge_ethernet_interface='{{bridge_ethernet_interface_autodetermined.stdout}}'
+  when: bridge_ethernet_interface is not defined
+
+- name: print bridge interface
+  debug:
+    var: bridge_ethernet_interface
+
+- name: Configure netplan bridge interface
+  template:
+    src: templates/99-bridge.yaml.j2
+    dest: /etc/netplan/99-bridge.yaml
+  register: netplan_config
+
+- name: Apply netplan configuration and reboot
+  shell: "netplan apply && reboot"
+  async: 1
+  poll: 0
+  ignore_errors: true
+  when: netplan_config is changed
+
+- name: Wait for the reboot to complete if the bridge was added
+  wait_for_connection:
+    connect_timeout: 20
+    sleep: 5
+    delay: 20
+    timeout: 600
+  when: netplan_config is changed
