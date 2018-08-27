@@ -1,0 +1,13 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: yes
+  tasks:
+  - name: Set up KVM
+    include_role:
+      name: kvm
+    vars:
+      setup_bridge: true
+...
