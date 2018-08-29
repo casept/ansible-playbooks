@@ -95,8 +95,8 @@
   when: allow_remote is defined and allow_remote and add_remote_locally is defined and add_remote_locally
   register: local_remotes
 
-- name: Add remote to localhost if LXC is installed locally
-  local_action: shell yes | lxc remote add "{{ inventory_hostname }}"
+- name: Add remote to localhost if requested
+  local_action: shell yes | lxc remote add "{{ inventory_hostname }}" --password "{{ lxd_password }}"
   args:
     warn: false
   when: allow_remote is defined and allow_remote and add_remote_locally is defined and add_remote_locally and inventory_hostname not in local_remotes.stdout
