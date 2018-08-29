@@ -41,7 +41,7 @@
 - name: Set up a network bridge
   include_role:
     name: bridge
-  when: setup_bridge
+  when: setup_bridge is defined and setup_bridge
 
 
 
@@ -55,10 +55,52 @@
   shell: lxd init --preseed < /etc/lxd-bridge-preseed.yml && rm -f /etc/ansible-lxd-init && touch /etc/ansible-lxd-bridge-init creates=/etc/ansible-lxd-bridge-init
   args:
     warn: false
-# Don't forget to mark bridged LXD as initialized and nonbridget as not!
+  when: setup_bridge is defined and setup_bridge
+
 # Run auto init when no bridge is desired
 - name: Initialize LXD
   args:
     warn: false
   shell: lxd init --auto && touch /etc/ansible-lxd-init && rm -f /etc/ansible-lxd-bridge-init creates=/etc/ansible-lxd-init
   when: setup_bridge is not defined or not setup_bridge
+
+- name: Check if remote access password is already set
+  command: lxc config get core.trust_password
+  register: current_password
+  changed_when: false
+  when: allow_remote is defined and allow_remote
+
+- name: Generate remote access password if requested and PW isn't yet set
+  set_fact:
+    lxd_password: "{{ lookup('password', '/dev/null chars=ascii_letters,digits encrypt=\'\'') }}"
+  when: allow_remote is defined and allow_remote and (current_password.stdout == "" or current_password.stdout == "true") # No idea why that value's set that way sometimes.
+
+- name: Set the trust password for adding remotes if specified
+  command: lxc config set core.trust_password "{{ lxd_password }}"
+  when: allow_remote is defined and allow_remote and (current_password.stdout == "" or current_password.stdout == "true") # No idea why that value's set that way sometimes.
+
+- name: Check if LXD already allows remote connections
+  command: lxc config get core.https_address
+  changed_when: false
+  register: current_address
+  when: allow_remote is defined and allow_remote
+
+- name: Allow remote connections to LXD
+  command: lxc config set core.https_address 0.0.0.0:8443
+  when: allow_remote is defined and allow_remote and "0.0.0.0" not in current_address.stdout
+
+#- name: Check if LXC is installed locally
+#  local_action:
+#    command: lxc
+#  changed_when: false
+
+#- name: Check if remote is already present
+
+#- name: Add remote to localhost if LXC is installed locally
+#  when: allow_remote is defined and allow_remote and add_remote_locally = true
+
+
+- name: Print LXD password
+  debug:
+    var: lxd_password
+  when: allow_remote is defined and allow_remote and (current_password.stdout == "" or current_password.stdout == "true") # No idea why that value's set that way sometimes.
