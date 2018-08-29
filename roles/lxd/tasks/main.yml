@@ -73,11 +73,11 @@
 - name: Generate remote access password if requested and PW isn't yet set
   set_fact:
     lxd_password: "{{ lookup('password', '/dev/null chars=ascii_letters,digits encrypt=\'\'') }}"
-  when: allow_remote is defined and allow_remote and (current_password.stdout == "" or current_password.stdout == "true") # No idea why that value's set that way sometimes.
+  when: allow_remote is defined and allow_remote and current_password.stdout == ""
 
 - name: Set the trust password for adding remotes if specified
   command: lxc config set core.trust_password "{{ lxd_password }}"
-  when: allow_remote is defined and allow_remote and (current_password.stdout == "" or current_password.stdout == "true") # No idea why that value's set that way sometimes.
+  when: allow_remote is defined and allow_remote and current_password.stdout == ""
 
 - name: Check if LXD already allows remote connections
   command: lxc config get core.https_address
@@ -89,18 +89,19 @@
   command: lxc config set core.https_address 0.0.0.0:8443
   when: allow_remote is defined and allow_remote and "0.0.0.0" not in current_address.stdout
 
-#- name: Check if LXC is installed locally
-#  local_action:
-#    command: lxc
-#  changed_when: false
+- name: Check if remote is already present
+  local_action: command lxc remote list
+  changed_when: false
+  when: allow_remote is defined and allow_remote and add_remote_locally is defined and add_remote_locally
+  register: local_remotes
 
-#- name: Check if remote is already present
-
-#- name: Add remote to localhost if LXC is installed locally
-#  when: allow_remote is defined and allow_remote and add_remote_locally = true
-
+- name: Add remote to localhost if LXC is installed locally
+  local_action: shell yes | lxc remote add "{{ inventory_hostname }}"
+  args:
+    warn: false
+  when: allow_remote is defined and allow_remote and add_remote_locally is defined and add_remote_locally and inventory_hostname not in local_remotes.stdout
 
 - name: Print LXD password
   debug:
     var: lxd_password
-  when: allow_remote is defined and allow_remote and (current_password.stdout == "" or current_password.stdout == "true") # No idea why that value's set that way sometimes.
+  when: allow_remote is defined and allow_remote and current_password.stdout == ""
