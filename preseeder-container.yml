@@ -1,0 +1,58 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: yes
+  tasks:
+
+  # This needs to be done because ansible uses "uname -p" naming, while lxd uses "debian" naming
+  - name: Set CPU arch to AMD64
+    set_fact: lxd_arch="amd64"
+    when: '"x86_64" in ansible_architecture'
+
+
+  # This needs to be done because ansible uses "uname -p" naming, while lxd uses "debian" naming
+  - name: Set CPU arch to armhf
+    set_fact: lxd_arch="armhf"
+    when: '"armv7" in ansible_architecture'
+
+  - name: Create preseeder container
+    lxd_container:
+      name: preseeder
+      state: started
+      wait_for_ipv4_addresses: true
+      source:
+        type: image
+        mode: pull
+        server: https://images.linuxcontainers.org
+        protocol: lxd
+        alias: ubuntu/bionic/{{ lxd_arch }}
+        profiles: ["default"]
+      ephemeral: false
+
+      # LXD snap doesn't expose unix socket at the default location
+      url: unix:///var/snap/lxd/common/lxd/unix.socket
+      timeout: 300
+
+  - name: Add container to ansible inventory
+    add_host:
+      name: "{{ inventory_hostname }}:preseeder"
+      ansible_host: "{{ inventory_hostname }}:preseeder"
+      ansible_connection: lxd
+    # Doesn't change anything permanently
+    changed_when: false
+
+  - name: Make sure python is installed
+    delegate_to: "{{ inventory_hostname }}:preseeder"
+    raw: bash -c "test -e /usr/bin/python || (apt-get -y update && apt-get install -y python-minimal)"
+    args:
+      executable: /bin/sh
+    register: output
+    changed_when: output.stdout
+
+  - name: Install preseeder
+    delegate_to: "{{ inventory_hostname }}:preseeder"
+    import_role:
+      name: preseeder
+...

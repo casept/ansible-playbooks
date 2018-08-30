@@ -1,0 +1,26 @@
+---
+- name: Install lighttpd
+  apt:
+    name: lighttpd
+    state: present
+
+- name: Install git
+  include_role:
+    name: git
+
+- name: Clone the preseed files into the server's webroot
+  git:
+    repo: 'https://github.com/casept/preseed'
+    dest: /var/preseed/
+    update: yes
+    recursive: true
+
+
+- name: Change lighttpd webroot
+  lineinfile:
+    state: present
+    path: /etc/lighttpd/lighttpd.conf
+    regexp: ".*server.document-root.*"
+    line: 'server.document-root        = "/var/preseed"'
+  notify: Restart lighttpd
+...
