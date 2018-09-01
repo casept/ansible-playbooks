@@ -1,0 +1,22 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: yes
+  tasks:
+
+  - name: Create syncthing relay container
+    include_role:
+      name: container
+    vars:
+      - container_name: syncthing-relay
+
+  - name: Set up syncthing relay server
+    delegate_to: "{{ inventory_hostname }}:syncthing-relay"
+    import_role:
+      name: syncthing-relay
+    vars:
+      provided_by: casept
+      rate_limit: 1250000 # 10 Megabit/s in bytes
+...

@@ -1,0 +1,8 @@
+---
+- name: Restart syncthing relay
+  systemd:
+    name: syncthing-relay
+    state: restarted
+    daemon-reload: true
+    enabled: true
+...

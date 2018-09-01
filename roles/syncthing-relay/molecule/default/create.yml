@@ -1,0 +1,23 @@
+---
+- name: Create
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  no_log: "{{ not (lookup('env', 'MOLECULE_DEBUG') | bool or molecule_yml.provisioner.log|default(false) | bool) }}"
+  tasks:
+    - name: Create molecule instance(s)
+      lxd_container:
+        name: "{{ item.name }}"
+        state: started
+        source:
+          type: image
+          mode: pull
+          server: https://images.linuxcontainers.org
+          protocol: lxd
+          alias: ubuntu/bionic/amd64
+        profiles: ["default"]
+        wait_for_ipv4_addresses: true
+        # LXD snap doesn't expose unix socket at the default location
+        url: unix:///var/snap/lxd/common/lxd/unix.socket
+        timeout: 600
+      with_items: "{{ molecule_yml.platforms }}"

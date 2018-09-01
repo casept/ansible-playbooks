@@ -1,0 +1,13 @@
+[Unit]
+Description=Syncthing relay
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+User=strelaysrv
+Group=strelaysrv
+
+ExecStart=/usr/bin/strelaysrv -keys=/var/strelaysrv {{ provided_by_cmdline }} {{ rate_limit_cmdline }}
+
+[Install]
+WantedBy=multi-user.target
