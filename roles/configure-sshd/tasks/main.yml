@@ -1,24 +1,24 @@
 ---
 - name: Install openssh
-  become: yes
+  become: true
   become_user: root
   become_method: sudo
   apt:
     package: openssh-server
     state: present
 
-- name: Change SSHd port to 666
-  become: yes
+- name: Change SSHd port
+  become: true
   become_user: root
   become_method: sudo
   lineinfile:
     dest: "/etc/ssh/sshd_config"
     regexp: "^Port"
-    line: "Port 666"
+    line: "Port {{ port }}"
   notify: "Restart sshd"
 
 - name: Enable key auth
-  become: yes
+  become: true
   become_user: root
   become_method: sudo
   lineinfile:
@@ -28,7 +28,7 @@
   notify: "Restart sshd"
 
 - name: Disable password auth
-  become: yes
+  become: true
   become_user: root
   become_method: sudo
   lineinfile:
@@ -38,7 +38,7 @@
   notify: "Restart sshd"
 
 - name: Disallow root login
-  become: yes
+  become: true
   become_user: root
   become_method: sudo
   lineinfile:
@@ -46,24 +46,4 @@
     regexp: "^PermitRootLogin"
     line: "PermitRootLogin no"
   notify: "Restart sshd"
-
-  # Currently disabled as ansible doesn't seem to be able to skip this on hosts without selinux
-  #    - name: Setup selinux for alternate SSH port
-  #      seport:
-  #        ports: "666"
-  #        proto: "tcp"
-  #        setype: "ssh_port_t"
-  #        state: "present"
-
-  #    - name: Check if UFW is installed
-  #      # TODO: Get location of the binary from PATH
-  #      stat: path=/usr/sbin/ufw
-  #      register: ufw_binary
-
-  #    - name: Set up UFW if present
-  #      ufw:
-  #        rule: allow
-  #        port: 666
-  #        proto: tcp
-  #      when: ufw_binary.exists == True
 ...

@@ -1,5 +1,7 @@
 ---
 - name: Install mosh
+  become: true
+  become_user: root
   package:
     name: mosh
     state: present

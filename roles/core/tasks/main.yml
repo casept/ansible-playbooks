@@ -1,0 +1,107 @@
+---
+- name: Set up the ansible user
+  become: true
+  become_user: root
+  include_role:
+    name: user-setup
+  vars:
+    username: 'ansible'
+    user_ssh_keys: '{{ ssh_keys }}'
+    sudoer: true
+    passwordless_sudo: true
+
+
+- name: Set up the manual maintenance user
+  become: true
+  become_user: root
+  include_role:
+    name: user-setup
+  vars:
+    username: 'maintenance'
+    # Named differently as workaround for https://github.com/ansible/ansible/issues/8603
+    user_ssh_keys: '{{ ssh_keys }}'
+    sudoer: true
+    passwordless_sudo: true
+
+
+- name: Install dotfiles for the maintenance user
+  become: true
+  become_user: root
+  include_role:
+    name: dotfiles
+  vars:
+    username: 'maintenance'
+
+- name: Set up SSHD
+  become: true
+  become_user: root
+  include_role:
+    name: configure-sshd
+  vars:
+    port: '{{ ssh_port }}'
+
+
+- name: Install mosh
+  become: true
+  become_user: root
+  include_role:
+    name: mosh
+
+- name: Configure unattended upgrades
+  become: true
+  become_user: root
+  include_role:
+    name: jnv.unattended-upgrades
+  vars:
+    unattended_clean_interval: 7
+    unattended_automatic_reboot_time: 02:00
+
+- name: Set the system hostname if requested
+  become: true
+  become_user: root
+  hostname:
+    name: '{{ hostname }}'
+  when: hostname is defined
+
+- name: Set up locales
+  become: true
+  become_user: root
+  include_role:
+    name: locales
+  vars:
+    locales_present: [en_US.UTF-8, en_GB.UTF-8, de_DE.UTF-8]
+    # I use a funky one here to get English as the system language with europoor measurements, currency etc.
+    locales_default:
+      lang: en_US.UTF-8
+      language: en_US.UTF-8
+      lc_address: de_DE.UTF-8
+      lc_collate: en_US.UTF-8
+      lc_ctype: de_DE.UTF-8
+      lc_identification: de_DE.UTF-8
+      lc_measurement: de_DE.UTF-8
+      lc_messages: en_US.UTF-8
+      lc_monetary: de_DE.UTF-8
+      lc_name: de_DE.UTF-8
+      lc_numeric: de_DE.UTF-8
+      lc_paper: de_DE.UTF-8
+      lc_response: en_US.UTF-8
+      lc_telephone: de_DE.UTF-8
+      # 24-hour clock with English weekdays/months
+      lc_time: en_GB.UTF-8
+
+- name: Get username of the user running the playbook
+  when: remove_provision_user is defined and remove_provision_user
+  become: false
+  command: whoami
+  register: provision_user
+  changed_when: false
+
+- name: Remove the provisioning user if requested
+  when:
+    - remove_provision_user is defined
+    - remove_provision_user == True
+  user:
+    name: '{{ provision_user.stdout }}'
+    state: absent
+    remove: true
+...
