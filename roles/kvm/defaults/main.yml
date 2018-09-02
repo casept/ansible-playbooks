@@ -1,0 +1,5 @@
+---
+add_kvm_user: true
+setup_bridge: true
+configure_kvm_ssh: false
+...

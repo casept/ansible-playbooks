@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: kvm
+      kvm_ssh_keys:
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPI1AD5QDRLDrewxCIeYrrtjfUNSZvzm+jqmchiwjiXsoTtUbc1b4kGBeOxy8aVQ6ho7LwTw6fVQQcABAYmaFkLJK3GZF7izrN6QQ0VmjjJgVq8dhwMwU4WQL1W69nWeRx/MaWlil3my5YNQVZVglHZbjIFdnbXWWRhMdb16XQLMgPJpQFPoW8fV8D8ubtg/GrBCJNikEflRzcDLvx5eqF0Jmph9QUiRH1LoGi5hRlD+TIkitPSsItbecJ38mUlIdunl3xcuv0iHkP4e5T4AwRgkqmnAA8RSKQ6rnyXAk0dIpHXWcOIJeFU+5Klok3TZogudQhb2MkLdEqHUxWpmd9 root@57cfb02cb2ab
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC5aJzaZDaiwgWs1TTYiGesAlV1Z11pZAMz9Lg2R9JS74chq1+OaFrbMABwZUp3BaFE/KpQHY1fBPGZuZERiYkI4HB5swtPtZo55mkEdPiqEH+TmdiqMLZDlr1G3IkcPu5mvWEZyrTAXcvw9nb/pDkcdT9pxWkMzG+kdWqJuqdlzGukH6mO1+tCezy8LXcEZ2AmmbHMMnSV6RTP2C+JRMaltAmF55cL4uwPxNhXr8iFT00i6NTPjaIfdg6lH7qxeddFEZ+115DUnpESipoE9xQjYtA/8T8fw6WmxgO9xsbAnQDUoQMdwdg07lAJ6BhfomTMTk4Y+PXumf3yIo0bpos7 root@57cfb02cb2ab
+      add_kvm_user: true
+      setup_bridge: true

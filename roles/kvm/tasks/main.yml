@@ -1,9 +1,10 @@
 ---
 - name: Install headless libvirt instance
+  become: true
+  become_user: root
   apt:
     name:
       - qemu-kvm
-      - libvirt-clients
       - libvirt-daemon-system
       - libguestfs-tools
       - genisoimage
@@ -11,22 +12,42 @@
       - libosinfo-bin
     state: present
 
-- name: Add maintenance user to kvm group
-  user:
-    name: maintenance
-    groups: kvm
-    append: yes
+- name: Create KVM user
+  include_role:
+    name: user-setup
+  vars:
+    sudoer: false
+    passwordless_sudo: false
+    username: kvm
+  when: add_kvm_user is defined and add_kvm_user and kvm_ssh_keys is not defined
 
+- name: Print SSH keys
+  debug:
+  var: kvm_ssh_keys
 
-- name: Add ansible user to kvm group
+- name: Create KVM user for remote managment via SSH
+  include_role:
+    name: user-setup
+  vars:
+    sudoer: false
+    passwordless_sudo: false
+    username: kvm
+    user_ssh_keys: '{{ kvm_ssh_keys }}'
+  when: add_kvm_user is defined and add_kvm_user and kvm_ssh_keys is defined
+
+- name: Add KVM user to relevant groups
+  become_user: root
+  become: true
   user:
-    name: maintenance
-    groups: kvm
+    name: kvm
+    groups: [kvm, libvirt]
     append: yes
+  when: add_kvm_user is defined and add_kvm_user
 
 - name: Set up a network bridge
+  become: true
+  become_user: root
   include_role:
     name: bridge
   when: setup_bridge is defined and setup_bridge
-
 ...
