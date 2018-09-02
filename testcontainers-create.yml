@@ -19,9 +19,6 @@
       config:
         security.privileged: "true"
         security.nesting: "true"
-
-      # LXD snap doesn't expose unix socket at the default location
-      url: unix:///var/snap/lxd/common/lxd/unix.socket
       timeout: 300
 
   - name: Install python in the container

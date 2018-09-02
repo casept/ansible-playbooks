@@ -7,6 +7,4 @@
     lxd_container:
       name: ubuntu-bionic-ansible
       state: absent
-      # LXD snap doesn't expose unix socket at the default location
-      url: unix:///var/snap/lxd/common/lxd/unix.socket
 ...

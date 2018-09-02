@@ -30,9 +30,6 @@
         alias: ubuntu/bionic/{{ lxd_arch }}
         profiles: ["default"]
       ephemeral: false
-
-      # LXD snap doesn't expose unix socket at the default location
-      url: unix:///var/snap/lxd/common/lxd/unix.socket
       timeout: 300
 
   - name: Add container to ansible inventory
