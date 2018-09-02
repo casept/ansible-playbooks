@@ -16,12 +16,16 @@
     var: bridge_ethernet_interface
 
 - name: Configure netplan bridge interface
+  become: yes
+  become_user: root
   template:
     src: templates/99-bridge.yaml.j2
     dest: /etc/netplan/99-bridge.yaml
   register: netplan_config
 
 - name: Apply netplan configuration and reboot
+  become: yes
+  become_user: root
   shell: "netplan apply && reboot"
   async: 1
   poll: 0
