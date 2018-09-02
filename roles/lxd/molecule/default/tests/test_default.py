@@ -25,6 +25,15 @@ def test_bridge_is_default(host):
         assert "parent: br0" in profile.stdout
 
 
+def test_symlinked_socket(host):
+    with host.sudo():
+        socket = host.file("/var/lib/lxd/unix.socket")
+        orig_socket = host.file("/var/snap/lxd/common/lxd/unix.socket")
+        assert socket.exists
+        assert socket.is_socket
+        assert socket.user == orig_socket.user
+        assert socket.group == orig_socket.group
+
 # Cuurently bugged.
 # def test_lxd_socket_listening(host):
 #    assert host.socket("tcp://0.0.0.0:8443").is_listening

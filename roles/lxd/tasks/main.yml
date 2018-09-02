@@ -14,6 +14,19 @@
     name: [lxd, lxd-client]
     state: absent
     autoremove: true
+  register: lxd_package_uninstalled
+
+- name: Remove leftover unix socket from package
+  become: true
+  become_user: root
+  # Can't be a handler because another task requires it, but handlers
+  # only run at the end of the play.
+  tags:
+    - skip_ansible_lint
+  file:
+    path: /var/lib/lxd/unix.socket
+    state: absent
+  when: lxd_package_uninstalled.changed
 
 - name: Check whether LXD snap is already installed
   become: true
@@ -81,6 +94,29 @@
     warn: false
   shell: lxd init --auto && touch /etc/ansible-lxd-init && rm -f /etc/ansible-lxd-bridge-init creates=/etc/ansible-lxd-init
   when: setup_bridge is not defined or not setup_bridge
+
+- name: Create the directory the socket usually resides in
+  become: true
+  become_user: root
+  file:
+    path: /var/lib/lxd
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  when: symlink_socket is defined and symlink_socket
+
+- name: Symlink snap socket to location where most tools expect it
+  become: true
+  become_user: root
+  file:
+    src: /var/snap/lxd/common/lxd/unix.socket
+    dest: /var/lib/lxd/unix.socket
+    state: link
+    owner: root
+    group: lxd
+    mode: 0660
+  when: symlink_socket is defined and symlink_socket
 
 - name: Check if remote access password is already set
   become: true

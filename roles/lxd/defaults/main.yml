@@ -2,3 +2,4 @@
 setup_bridge: true
 allow_remote: true
 add_remote_locally: true
+symlink_socket: true
