@@ -1,28 +1,38 @@
 ---
 - name: Ensure snapd is installed
+  become: true
+  become_user: root
   package:
     name: snapd
     state: present
 
 
 - name: Ensure system-packaged LXD is removed
+  become: true
+  become_user: root
   apt:
     name: [lxd, lxd-client]
     state: absent
     autoremove: true
 
 - name: Check whether LXD snap is already installed
+  become: true
+  become_user: root
   # TODO: Replace with snap module once available
   command: "snap list"
   register: installed_snaps
   changed_when: false
 
 - name: Install LXD snap
+  become: true
+  become_user: root
   command: "snap install lxd"
   when: "'lxd' not in installed_snaps.stdout"
   register: lxd_installation
 
 - name: Reboot if the snap was installed
+  become: true
+  become_user: root
   shell: "sleep 5 && reboot"
   args:
     warn: false
@@ -38,20 +48,26 @@
     timeout: 600
   when: lxd_installation is changed
 
+
 - name: Set up a network bridge
+  become: true
+  become_user: root
   include_role:
     name: bridge
   when: setup_bridge is defined and setup_bridge
 
 
-
 - name: Copy bridged LXD configuration
+  become: true
+  become_user: root
   copy:
     src: files/lxd-bridge-preseed.yml
     dest: /etc/lxd-bridge-preseed.yml
   when: setup_bridge is defined and setup_bridge
 
 - name: Initialize bridged LXD
+  become: true
+  become_user: root
   shell: lxd init --preseed < /etc/lxd-bridge-preseed.yml && rm -f /etc/ansible-lxd-init && touch /etc/ansible-lxd-bridge-init creates=/etc/ansible-lxd-bridge-init
   args:
     warn: false
@@ -59,46 +75,62 @@
 
 # Run auto init when no bridge is desired
 - name: Initialize LXD
+  become: true
+  become_user: root
   args:
     warn: false
   shell: lxd init --auto && touch /etc/ansible-lxd-init && rm -f /etc/ansible-lxd-bridge-init creates=/etc/ansible-lxd-init
   when: setup_bridge is not defined or not setup_bridge
 
 - name: Check if remote access password is already set
+  become: true
+  become_user: root
   command: lxc config get core.trust_password
   register: current_password
   changed_when: false
   when: allow_remote is defined and allow_remote
 
 - name: Generate remote access password if requested and PW isn't yet set
+  become: true
+  become_user: root
   set_fact:
-    lxd_password: "{{ lookup('password', '/dev/null chars=ascii_letters,digits encrypt=\'\'') }}"
+    lxd_password: "{{ lookup('password', '/dev/null chars=ascii_letters,digits encrypt=') }}"
   when: allow_remote is defined and allow_remote and current_password.stdout == ""
 
 - name: Set the trust password for adding remotes if specified
+  become: true
+  become_user: root
   command: lxc config set core.trust_password "{{ lxd_password }}"
   when: allow_remote is defined and allow_remote and current_password.stdout == ""
 
 - name: Check if LXD already allows remote connections
+  become: true
+  become_user: root
   command: lxc config get core.https_address
   changed_when: false
   register: current_address
   when: allow_remote is defined and allow_remote
 
 - name: Allow remote connections to LXD
+  become: true
+  become_user: root
   command: lxc config set core.https_address 0.0.0.0:8443
   when: allow_remote is defined and allow_remote and "0.0.0.0" not in current_address.stdout
 
 - name: Check if remote is already present
-  local_action: command lxc remote list
+  command: lxc remote list
+  become: no
   changed_when: false
+  delegate_to: localhost
   when: allow_remote is defined and allow_remote and add_remote_locally is defined and add_remote_locally
   register: local_remotes
 
 - name: Add remote to localhost if requested
-  local_action: shell yes | lxc remote add "{{ inventory_hostname }}" --password "{{ lxd_password }}"
+  shell: yes | lxc remote add "{{ inventory_hostname }}" --password "{{ lxd_password }}"
+  become: no
   args:
     warn: false
+  delegate_to: localhost
   when: allow_remote is defined and allow_remote and add_remote_locally is defined and add_remote_locally and inventory_hostname not in local_remotes.stdout
 
 - name: Print LXD password

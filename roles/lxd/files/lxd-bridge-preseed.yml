@@ -1,12 +1,13 @@
+---
 config: {}
 networks: []
 storage_pools:
-- config: {}
+- config: {} # yamllint disable-line
   description: ""
   name: default
   driver: dir
 profiles:
-- config: {}
+- config: {} # yamllint disable-line
   description: ""
   devices:
     eth0:
@@ -20,3 +21,4 @@ profiles:
       type: disk
   name: default
 cluster: null
+...

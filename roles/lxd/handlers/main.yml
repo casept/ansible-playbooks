@@ -1,2 +1,3 @@
+---
 - name: Restart LXD
   service: name=lxd state=restarted
