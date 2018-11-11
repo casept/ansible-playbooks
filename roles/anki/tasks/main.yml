@@ -3,7 +3,7 @@
   # Forgive the use of wget - it's much cleaner than the alternative.
   args:
     warn: false
-  shell: wget --quiet https://apps.ankiweb.net/ -O- | grep -o "/downloads/current/.*amd64.tar.bz2" | awk '{print "https://apps.ankiweb.net", $0;}' | tr -d ' '
+  shell: wget --quiet https://apps.ankiweb.net/ -O- | grep -o "/downloads/current/.*amd64.tar.bz2" | awk '{print "https://apps.ankiweb.net", $0;}' | tr -d ' ' | head -1
   register: anki_latest_url
   failed_when: anki_latest_url.rc > 0
   changed_when: False
@@ -95,9 +95,28 @@
     dest: /usr/local/bin/anki
     state: link
 
+
+- name: Ensure .desktop file directory exists
+  file:
+    path: /usr/local/share/applications
+    state: directory
+
 - name: Symlink anki .desktop file
   file:
     src: /opt/anki/anki.desktop
     dest: /usr/local/share/applications/anki.desktop
+    state: link
+
+
+- name: Ensure icon directory exists
+  file:
+    path: /usr/local/share/pixmaps
+    state: directory
+
+
+- name: Symlink anki icon
+  file:
+    src: /opt/anki/anki.xpm
+    dest: /usr/local/share/pixmaps/anki.xpm
     state: link
 ...
