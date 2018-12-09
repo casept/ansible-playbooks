@@ -1,0 +1,9 @@
+---
+- name: Install virt-manager
+  become: true
+  become_user: root
+  apt:
+    name:
+      - virt-manager
+    state: present
+...
