@@ -62,6 +62,7 @@
   hostname:
     name: '{{ hostname }}'
   when: hostname is defined
+  register: hostname_set
 
 - name: Set up locales
   become: true
@@ -104,4 +105,24 @@
     name: '{{ provision_user.stdout }}'
     state: absent
     remove: true
+
+
+- name: Reboot if the hostname was changed (so the DNS/DHCP server assigns the new hostname)
+  become: true
+  become_user: root
+  shell: "sleep 5 && reboot"
+  args:
+    warn: false
+  async: 1
+  poll: 0
+  when: lxd_installation is changed
+
+- name: Wait for the reboot to complete
+  wait_for_connection:
+    connect_timeout: 20
+    sleep: 5
+    delay: 5
+    timeout: 600
+  when: hostname_set is defined and hostname_set.changed
+
 ...
