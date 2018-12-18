@@ -78,6 +78,11 @@
     dest: /etc/lxd-bridge-preseed.yml
   when: setup_bridge is defined and setup_bridge
 
+- name: Ensure LXD is running
+  service:
+    name: snap.lxd.daemon
+    state: started
+
 - name: Initialize bridged LXD
   become: true
   become_user: root
@@ -155,21 +160,21 @@
 
 - name: Check if remote is already present
   command: lxc remote list
-  become: no
+  become: false
   changed_when: false
   delegate_to: localhost
   when: allow_remote is defined and allow_remote and add_remote_locally is defined and add_remote_locally
   register: local_remotes
 
 - name: Add remote to localhost if requested
-  shell: yes | lxc remote add "{{ inventory_hostname }}" --password "{{ lxd_password }}"
-  become: no
+  shell: lxc remote add "{{ inventory_hostname }}" --password "{{ lxd_password }}" --accept-certificate
+  become: false
   args:
     warn: false
   delegate_to: localhost
-  when: allow_remote is defined and allow_remote and add_remote_locally is defined and add_remote_locally and inventory_hostname not in local_remotes.stdout
+  when: allow_remote is defined and allow_remote and add_remote_locally is defined and add_remote_locally and lxd_password is defined and inventory_hostname not in local_remotes.stdout
 
 - name: Print LXD password
   debug:
     var: lxd_password
-  when: allow_remote is defined and allow_remote and current_password.stdout == ""
+  when: allow_remote is defined and allow_remote and lxd_password is defined
