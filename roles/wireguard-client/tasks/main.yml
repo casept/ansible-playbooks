@@ -1,0 +1,56 @@
+---
+- name: Add wireguard PPA
+  apt_repository:
+    repo: "ppa:wireguard/wireguard"
+    state: present
+
+- name: Install wireguard
+  apt:
+    package: wireguard
+    update_cache: true
+    state: present
+
+- name: Check whether wireguard keypair exists
+  stat:
+    path: /etc/wireguard/private.key
+  register: generate_keys
+
+- name: Generate wireguard keypair
+  shell: wg genkey | tee /etc/wireguard/private.key | wg pubkey > /etc/wireguard/public.key
+  when: generate_keys is defined and generate_keys.stat.exists == false
+
+- name: Lock down permissions of wireguard privkey
+  file:
+    path: /etc/wireguard/private.key
+    owner: root
+    group: root
+    mode: 0660
+
+- name: Lock down permissions of wireguard pubkey
+  file:
+    path: /etc/wireguard/public.key
+    owner: root
+    group: root
+    mode: 0664
+
+- name: Read in the client's privkey
+  slurp:
+    src: /etc/wireguard/private.key
+  register: client_privkey_encoded
+  changed_when: false
+
+- name: Decode the client's privkey
+  set_fact:
+    client_privkey: "{{ client_privkey_encoded.content | b64decode }}"
+
+
+- name: Generate wireguard config
+  template:
+    src: templates/wg0.conf.j2
+    dest: /etc/wireguard/wg0.conf
+    owner: root
+    group: root
+    mode: 0660
+
+# TODO: Add NetworkManager plugin once it matures
+...
