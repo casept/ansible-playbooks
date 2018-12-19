@@ -16,4 +16,8 @@
     executable: pip3
     name: pipenv
     state: present
+
+- name: Install pyenv
+  import_tasks: pyenv.yml
+  when: install_pyenv
 ...
