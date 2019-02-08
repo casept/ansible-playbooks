@@ -1,0 +1,22 @@
+---
+- name: Install C compilers
+  become: true
+  become_user: root
+  package:
+    name: [gcc, clang]
+    state: present
+
+- name: Install other build tools
+  become: true
+  become_user: root
+  package:
+    name: [build-essential, cmake]
+    state: present
+
+- name: Install debug tools
+  become: true
+  become_user: root
+  package:
+    name: [valgrind, electric-fence, lldb, gdb]
+    state: present
+...
