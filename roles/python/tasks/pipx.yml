@@ -1,0 +1,10 @@
+- name: Install pipx dependencies
+  apt:
+    name: python3-venv
+    state: present
+
+- name: Install pipx
+  pip:
+    executable: pip3
+    name: pipx
+    state: present

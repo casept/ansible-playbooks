@@ -20,4 +20,8 @@
 - name: Install pyenv
   import_tasks: pyenv.yml
   when: install_pyenv
+
+- name: Install pipx
+  import_tasks: pipx.yml
+  when: install_pipx
 ...
