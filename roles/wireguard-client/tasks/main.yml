@@ -6,7 +6,9 @@
 
 - name: Install wireguard
   apt:
-    package: wireguard
+    package:
+      - wireguard
+      - resolvconf
     update_cache: true
     state: present
 
