@@ -29,7 +29,7 @@
 
 - name: Install virtualbox base
   apt:
-    name: virtualbox-5.2
+    name: virtualbox-6.0
     state: present
     update_cache: yes
   notify: install extension pack
