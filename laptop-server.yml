@@ -1,0 +1,11 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: no
+  tasks:
+  - name: Prepare the laptop for server use
+    include_role:
+        name: laptop-server
+...

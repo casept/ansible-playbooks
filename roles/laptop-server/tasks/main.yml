@@ -1,0 +1,21 @@
+---
+- name: Disable suspend on lid close
+  become: true
+  become_user: root
+  become_method: sudo
+  lineinfile:
+    dest: "/etc/systemd/logind.conf"
+    regexp: "^HandleLidSwitch"
+    line: "HandleLidSwitch=ignore"
+  notify: "Restart logind"
+
+- name: Mask suspend systemd targets
+  with_items:
+    - sleep
+    - suspend
+    - hibernate
+    - hybrid-sleep
+  systemd:
+    name: "{{ item }}"
+    masked: yes
+...
