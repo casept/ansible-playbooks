@@ -1,0 +1,11 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: no
+  tasks:
+  - name: Make sure virt-manager is installed
+    include_role:
+        name: virt-manager
+...
