@@ -1,0 +1,11 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: no
+  tasks:
+  - name: Make sure C dev environment is installed
+    include_role:
+      name: c-devenv
+...
