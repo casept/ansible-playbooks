@@ -21,9 +21,6 @@
     username: kvm
   when: add_kvm_user is defined and add_kvm_user and kvm_ssh_keys is not defined
 
-- name: Print SSH keys
-  debug:
-  var: kvm_ssh_keys
 
 - name: Create KVM user for remote managment via SSH
   include_role:
