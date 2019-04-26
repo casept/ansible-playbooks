@@ -11,6 +11,7 @@ yamllint = "*"
 ansible-lint = "*"
 "flake8" = "*"
 python-vagrant = "*"
+influxdb = "*"
 
 [dev-packages]
 
