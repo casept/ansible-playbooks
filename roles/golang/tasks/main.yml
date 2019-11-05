@@ -27,6 +27,5 @@
     state: link
   with_items:
     - go
-    - godoc
     - gofmt
 ...
